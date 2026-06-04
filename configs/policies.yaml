@@ -1,0 +1,86 @@
+# Per-scenario compliance control policies (risk thresholds + strategy mapping).
+# Built-in strategy names cannot be overwritten; only mappings may be adjusted.
+
+education:
+  risk_thresholds:
+    safe: 0.2
+    low: 0.5
+    medium: 0.8
+    high: 1.0
+  strategy_mapping:
+    safe: passthrough
+    low: vanilla
+    medium: align3
+    high: spec_rewrite
+
+privacy:
+  risk_thresholds:
+    safe: 0.15
+    low: 0.45
+    medium: 0.75
+    high: 1.0
+  strategy_mapping:
+    safe: passthrough
+    low: vanilla
+    medium: align3
+    high: spec_rewrite
+
+biochem:
+  risk_thresholds:
+    safe: 0.2
+    low: 0.5
+    medium: 0.8
+    high: 1.0
+  strategy_mapping:
+    safe: passthrough
+    low: vanilla
+    medium: ttd_wrapper
+    high: refusal
+
+child:
+  risk_thresholds:
+    safe: 0.2
+    low: 0.5
+    medium: 0.8
+    high: 1.0
+  strategy_mapping:
+    safe: passthrough
+    low: vanilla
+    medium: align3
+    high: refusal
+
+code:
+  risk_thresholds:
+    safe: 0.2
+    low: 0.5
+    medium: 0.8
+    high: 1.0
+  strategy_mapping:
+    safe: passthrough
+    low: vanilla
+    medium: align3
+    high: spec_rewrite
+
+health:
+  risk_thresholds:
+    safe: 0.2
+    low: 0.5
+    medium: 0.8
+    high: 1.0
+  strategy_mapping:
+    safe: passthrough
+    low: vanilla
+    medium: align3
+    high: spec_rewrite
+
+travel:
+  risk_thresholds:
+    safe: 0.2
+    low: 0.5
+    medium: 0.8
+    high: 1.0
+  strategy_mapping:
+    safe: passthrough
+    low: vanilla
+    medium: align3
+    high: spec_rewrite

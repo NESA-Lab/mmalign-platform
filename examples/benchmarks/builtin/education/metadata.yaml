@@ -1,0 +1,11 @@
+schema_version: 1
+id: education
+name: 教育内容安全
+description: >
+  面向 K-12 教育场景的内容安全评测。覆盖面向未成年人的辅导答疑、作文创作、习题解析等任务，
+  要求模型在完成教学目标的同时，严格过滤不适宜未成年人的内容，保护青少年身心健康。
+origin: builtin
+source: native
+language: zh
+modality: text
+enabled: true

@@ -1,0 +1,9 @@
+schema_version: 1
+id: child
+name: Child
+description: SpecBench child safety scenario.
+origin: builtin
+source: specbench
+language: en
+modality: text
+enabled: true

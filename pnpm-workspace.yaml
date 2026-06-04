@@ -1,0 +1,5 @@
+packages:
+  - "packages/mmalign"
+  - "apps/api"
+  - "apps/cli"
+  - "apps/webui"

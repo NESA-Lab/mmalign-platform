@@ -1,0 +1,337 @@
+.overview-page {
+  width: 100%;
+}
+
+.overview-header {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 28px 32px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(49, 89, 245, 0.14), transparent 16rem),
+    linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+  border: 1px solid rgba(22, 32, 51, 0.05);
+  border-radius: 22px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.07);
+}
+
+.overview-title {
+  margin: 0 !important;
+  color: #172033 !important;
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.04em;
+}
+
+.overview-header .ant-segmented {
+  padding: 4px;
+  background: rgba(49, 89, 245, 0.08);
+  border: 1px solid rgba(49, 89, 245, 0.08);
+}
+
+.overview-header .ant-segmented-item {
+  min-width: 112px;
+  font-weight: 600;
+}
+
+.overview-stack {
+  width: 100%;
+}
+
+.overview-section-header {
+  margin-bottom: 4px;
+}
+
+.overview-section-title {
+  margin: 0 !important;
+  color: #172033 !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em;
+}
+
+.overview-metric-card .ant-card-body,
+.overview-project-card .ant-card-body {
+  padding: 22px 24px;
+}
+
+.overview-metric-card {
+  height: 100%;
+}
+
+.overview-metric-card .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.overview-metric-card .ant-statistic-title,
+.overview-project-card .ant-statistic-title {
+  margin-bottom: 10px;
+}
+
+.overview-metric-label,
+.overview-project-label {
+  color: #4b5565;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.overview-metric-delta {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 14px;
+  padding: 4px 10px;
+  color: #667085;
+  background: #f4f7fb;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.overview-metric-delta.is-empty {
+  visibility: hidden;
+}
+
+.overview-alert-summary .ant-card-body {
+  padding: 18px 22px;
+}
+
+.overview-alert-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.overview-alert-icon.error {
+  color: #b42318;
+  background: #fee4e2;
+}
+
+.overview-alert-icon.warning {
+  color: #b54708;
+  background: #fef0c7;
+}
+
+.overview-alert-icon.info {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.overview-alert-preview {
+  max-width: 860px;
+  margin: 8px 0 0 !important;
+  color: #667085;
+}
+
+.overview-alert-pill {
+  margin-inline-end: 0;
+  border: 0;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.overview-alert-pill.error {
+  color: #b42318;
+  background: #fee4e2;
+}
+
+.overview-alert-pill.warning {
+  color: #b54708;
+  background: #fef0c7;
+}
+
+.overview-alert-pill.info {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.overview-alert-pill.metric {
+  color: #3730a3;
+  background: #e0e7ff;
+}
+
+.overview-message-drawer .ant-drawer-header {
+  border-bottom: 1px solid rgba(22, 32, 51, 0.06);
+}
+
+.overview-message-drawer .ant-drawer-body {
+  padding: 18px;
+  background: #f6f8fc;
+}
+
+.overview-message-drawer .ant-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.overview-message-item {
+  padding: 16px !important;
+  background: #ffffff;
+  border: 1px solid rgba(22, 32, 51, 0.05) !important;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+}
+
+.overview-message-item.error {
+  border-left: 3px solid #f04438 !important;
+}
+
+.overview-message-item.warning {
+  border-left: 3px solid #f79009 !important;
+}
+
+.overview-message-item.info {
+  border-left: 3px solid #3159f5 !important;
+}
+
+.overview-message-text {
+  margin: 10px 0 0 !important;
+  color: #344054;
+  line-height: 1.6;
+}
+
+.overview-milestone-card .ant-card-body {
+  padding: 22px;
+}
+
+.overview-milestone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.overview-milestone {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 136px;
+  padding: 16px;
+  background: #f8faff;
+  border: 1px solid rgba(22, 32, 51, 0.05);
+  border-radius: 18px;
+}
+
+.overview-milestone.finish {
+  background: #f5fbff;
+}
+
+.overview-milestone.process {
+  background: linear-gradient(135deg, #f5f7ff 0%, #eef4ff 100%);
+  border-color: rgba(49, 89, 245, 0.16);
+}
+
+.overview-milestone.wait {
+  color: #98a2b3;
+  background: #f8f9fb;
+}
+
+.overview-milestone-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: #3159f5;
+  background: #ffffff;
+  border: 1px solid rgba(49, 89, 245, 0.18);
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(49, 89, 245, 0.12);
+  font-weight: 800;
+}
+
+.overview-milestone.wait .overview-milestone-marker {
+  color: #98a2b3;
+  border-color: rgba(152, 162, 179, 0.18);
+  box-shadow: none;
+}
+
+.overview-milestone-body {
+  min-width: 0;
+}
+
+.overview-milestone-title {
+  display: block;
+  color: #172033;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.overview-milestone-date {
+  display: block;
+  margin-top: 4px;
+  color: #667085;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.overview-milestone-desc {
+  margin: 10px 0 0 !important;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.overview-chart-card .ant-card-body {
+  padding: 18px 20px 22px;
+}
+
+.overview-score-tag {
+  min-width: 56px;
+  margin-inline-end: 0;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.overview-score-tag.good {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.overview-score-tag.medium {
+  color: #1e40af;
+  background: #dbeafe;
+}
+
+.overview-score-tag.warn {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+@media (max-width: 640px) {
+  .overview-header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 22px;
+  }
+
+  .overview-header .ant-segmented {
+    width: 100%;
+  }
+}
+
+/* Legacy guard in case Ant Design injects tab markup during HMR. */
+.overview-tabs .ant-tabs-nav {
+  margin-bottom: 20px;
+}
+
+.overview-tabs .ant-tabs-nav::before {
+  border-bottom: 0 !important;
+}
+
+.overview-tabs .ant-tabs-content-holder {
+  border-top: 0 !important;
+}

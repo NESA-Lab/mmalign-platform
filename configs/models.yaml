@@ -1,0 +1,98 @@
+# Model backend registry.
+#
+# Fields:
+#   provider:      openai | azure_openai | openai_compatible | vllm | huggingface | mock
+#   model_name:    canonical model name forwarded to the upstream API
+#   api_style:     responses | chat_completions  (determines which endpoint to call)
+#   base_url:      API base URL (omit to use provider default)
+#   api_key_env:   name of the environment variable holding the API key
+#   timeout_s:     request timeout in seconds
+#   max_retries:   number of retry attempts on transient failures
+#   capabilities:  static capability declaration (overrides auto-detection)
+
+models:
+  # ── Local deterministic stub for unit tests ───────────────────────────
+  mock:
+    provider: mock
+    model_name: mock
+    api_style: mock
+    timeout_s: 5
+    max_retries: 0
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: false
+
+  # ── OpenAI GPT-4.1 ────────────────────────────────────────────────────
+  gpt-4.1:
+    provider: openai
+    model_name: gpt-4.1
+    api_style: responses
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    timeout_s: 60
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: true
+
+  # ── OpenAI o4-mini (reasoning model) ─────────────────────────────────
+  o4-mini:
+    provider: openai
+    model_name: o4-mini
+    api_style: responses
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    timeout_s: 120
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: false
+      openai_compatible: true
+
+  # ── DeepSeek V3 (OpenAI-compatible) ─────────────────────────────────
+  deepseek-v3:
+    provider: openai_compatible
+    model_name: deepseek-chat
+    api_style: chat_completions
+    base_url: https://api.deepseek.com/v1
+    api_key_env: DEEPSEEK_API_KEY
+    timeout_s: 60
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: true
+
+  # ── Qwen3-32B (OpenAI-compatible) ────────────────────────────────────
+  qwen3-32b:
+    provider: openai_compatible
+    model_name: qwen3-32b
+    api_style: chat_completions
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    api_key_env: DASHSCOPE_API_KEY
+    timeout_s: 90
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: true
+
+  # ── Partner model endpoint template ──────────────────────────────────
+  # partner-model:
+  #   provider: openai_compatible
+  #   model_name: partner-vlm
+  #   api_style: chat_completions
+  #   base_url: https://partner.example.com/v1
+  #   api_key_env: PARTNER_API_KEY
+  #   timeout_s: 120
+  #   max_retries: 1
+  #   capabilities:
+  #     input_modalities: ["text", "image"]
+  #     output_modalities: ["text"]

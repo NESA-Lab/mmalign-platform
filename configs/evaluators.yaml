@@ -1,0 +1,27 @@
+# Evaluator registry.
+#
+# Fields:
+#   type:              llm_judge | mock_judge | rule_based
+#   judge_model:       model ID from models.yaml (llm_judge only)
+#   mode:              joint (default) | sequential
+#   temperature:       judge generation temperature (default 0)
+#   max_output_tokens: max judge response tokens
+#   retries:           JSON parse retry count
+#   strict_json:       fail sample on parse failure after retries
+
+evaluators:
+  llm_judge:
+    type: llm_judge
+    judge_model: gpt-4.1
+    mode: joint
+    temperature: 0
+    max_output_tokens: 2048
+    retries: 2
+    strict_json: true
+
+  mock_judge:
+    type: mock_judge
+    deterministic: true
+
+  rule_based:
+    type: rule_based

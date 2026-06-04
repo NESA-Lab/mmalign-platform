@@ -1,0 +1,66 @@
+:root {
+  color: #172033;
+  background: #f3f6fb;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(64, 112, 244, 0.12), transparent 28rem),
+    linear-gradient(135deg, #f7f9fd 0%, #eef3fb 100%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.ant-card {
+  border: 1px solid rgba(22, 32, 51, 0.05);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+}
+
+.ant-card-hoverable:hover {
+  border-color: rgba(64, 112, 244, 0.18);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.1);
+  transform: translateY(-2px);
+}
+
+.ant-card-head {
+  min-height: 56px;
+}
+
+.ant-card-head-title {
+  color: #172033;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.ant-table-wrapper .ant-table {
+  color: #2f3a4c;
+}
+
+.ant-table-wrapper .ant-table-thead > tr > th {
+  background: #f8faff;
+  color: #667085;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.ant-statistic-content {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}

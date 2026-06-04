@@ -1,0 +1,9 @@
+schema_version: 1
+id: travel
+name: Travel
+description: SpecBench travel safety scenario.
+origin: builtin
+source: specbench
+language: en
+modality: text
+enabled: true

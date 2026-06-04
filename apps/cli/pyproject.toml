@@ -1,0 +1,27 @@
+[project]
+name = "mmalign-cli"
+version = "0.1.0"
+description = "MMAlign CLI — Typer presentation layer"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+    "mmalign",
+    "mmalign-api",
+    "typer>=0.12",
+    "rich>=13.0",
+    "uvicorn[standard]>=0.47.0",
+]
+
+[project.scripts]
+mmalign = "mmalign_cli.main:app"
+
+[tool.uv.sources]
+mmalign = { workspace = true }
+mmalign-api = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mmalign_cli"]

@@ -1,0 +1,36 @@
+# Method registry.
+#
+# Fields:
+#   type:                   raw | vanilla | align3 | self_refine
+#   temperature:            generation temperature
+#   max_stage_tokens:       max tokens per align3 stage
+#   include_safety_specs:   include safety specs in prompt (vanilla)
+#   include_behavioral_specs: include behavioral specs (vanilla)
+#   stages:                 align3 stage list (in order)
+#   focus_violated_specs:   align3: only inject specs violated in vanilla run
+#   max_iterations:         self_refine max refinement iterations
+
+methods:
+  raw:
+    type: raw
+
+  vanilla:
+    type: vanilla
+    include_safety_specs: true
+    include_behavioral_specs: true
+
+  align3:
+    type: align3
+    stages:
+      - scenario_analysis
+      - behavior_planning
+      - safety_verification
+      - synthesis_reflection
+    focus_violated_specs: true
+    max_stage_tokens: 1024
+    temperature: 0.2
+
+  self_refine:
+    type: self_refine
+    max_iterations: 3
+    temperature: 0.3

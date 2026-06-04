@@ -1,0 +1,12 @@
+[project]
+name = "mmalign-platform"
+version = "0.1.0"
+description = "MMAlign monorepo workspace"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["packages/mmalign", "apps/api", "apps/cli"]

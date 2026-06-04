@@ -1,0 +1,8 @@
+{
+  "name": "@mmalign/cli",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "uv build --out-dir dist"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@mmalign/api",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "uv run uvicorn mmalign_api.app:app --reload --port 8000",
+    "serve": "uv run uvicorn mmalign_api.app:app --port 8000",
+    "build": "uv build --out-dir dist"
+  }
+}

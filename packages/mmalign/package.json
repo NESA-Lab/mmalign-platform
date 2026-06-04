@@ -1,0 +1,11 @@
+{
+  "name": "@mmalign/mmalign",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "test": "uv run --extra dev pytest",
+    "lint": "uv run --extra dev ruff check mmalign tests",
+    "typecheck": "uv run --extra dev mypy mmalign",
+    "build": "uv build --out-dir dist"
+  }
+}
