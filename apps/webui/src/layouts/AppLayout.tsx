@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Layout, Menu, Typography, theme } from "antd";
+import { isDefaultAntdMode } from "../utils/defaultAntd";
 import {
   DashboardOutlined,
   ExperimentOutlined,
@@ -14,6 +15,33 @@ import {
 } from "@ant-design/icons";
 
 const { Header, Sider, Content } = Layout;
+
+const defaultLayoutStyle: CSSProperties = { minHeight: "100vh", background: "#f5f5f5" };
+const defaultSiderStyle: CSSProperties = {
+  background: "#ffffff",
+  borderRight: "1px solid #f0f0f0",
+};
+const defaultBrandStyle: CSSProperties = {
+  height: 64,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+const defaultTitleStyle: CSSProperties = {
+  margin: 0,
+  color: "rgba(0, 0, 0, 0.88)",
+  fontWeight: 600,
+  whiteSpace: "nowrap",
+};
+const defaultHeaderStyle: CSSProperties = {
+  height: 64,
+  padding: "0 24px",
+  display: "flex",
+  alignItems: "center",
+  background: "#ffffff",
+  borderBottom: "1px solid #f0f0f0",
+};
+const defaultContentStyle: CSSProperties = { margin: 24, minHeight: 280 };
 
 const menuItems = [
   { key: "/overview", icon: <DashboardOutlined />, label: "总览" },
@@ -32,39 +60,52 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { token } = theme.useToken();
+  const defaultAntd = isDefaultAntdMode();
 
   return (
-    <Layout style={{ minHeight: "100vh", background: token.colorBgLayout }}>
+    <Layout style={defaultAntd ? defaultLayoutStyle : { minHeight: "100vh", background: token.colorBgLayout }}>
       <Sider
         collapsible
         collapsed={collapsed}
         onCollapse={setCollapsed}
         theme="light"
-        width={232}
-        style={{
-          background: token.colorBgContainer,
-          boxShadow: "12px 0 30px rgba(15, 23, 42, 0.04)",
-          zIndex: 10,
-        }}
+        width={defaultAntd ? 190 : 232}
+        style={
+          defaultAntd
+            ? defaultSiderStyle
+            : {
+                background: token.colorBgContainer,
+                boxShadow: "12px 0 30px rgba(15, 23, 42, 0.04)",
+                zIndex: 10,
+              }
+        }
       >
         <div
-          style={{
-            height: 72,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: collapsed ? "0 12px" : "0 20px",
-          }}
+          style={
+            defaultAntd
+              ? defaultBrandStyle
+              : {
+                  height: 72,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: collapsed ? "0 12px" : "0 20px",
+                }
+          }
         >
           <Typography.Title
             level={4}
-            style={{
-              margin: 0,
-              color: token.colorPrimary,
-              fontWeight: 800,
-              letterSpacing: "-0.04em",
-              whiteSpace: "nowrap",
-            }}
+            style={
+              defaultAntd
+                ? defaultTitleStyle
+                : {
+                    margin: 0,
+                    color: token.colorPrimary,
+                    fontWeight: 800,
+                    letterSpacing: "-0.04em",
+                    whiteSpace: "nowrap",
+                  }
+            }
           >
             {collapsed ? "MM" : "MMAlign"}
           </Typography.Title>
@@ -74,25 +115,32 @@ export default function AppLayout() {
           selectedKeys={[location.pathname]}
           items={menuItems}
           onClick={({ key }) => navigate(key)}
-          style={{ borderRight: 0, background: "transparent" }}
+          style={defaultAntd ? { borderRight: 0 } : { borderRight: 0, background: "transparent" }}
         />
       </Sider>
-      <Layout style={{ background: "transparent" }}>
+      <Layout style={defaultAntd ? undefined : { background: "transparent" }}>
         <Header
-          style={{
-            background: "rgba(255, 255, 255, 0.82)",
-            padding: "0 32px",
-            display: "flex",
-            alignItems: "center",
-            backdropFilter: "blur(18px)",
-            boxShadow: "0 1px 20px rgba(15, 23, 42, 0.04)",
-          }}
+          style={
+            defaultAntd
+              ? defaultHeaderStyle
+              : {
+                  background: "rgba(255, 255, 255, 0.82)",
+                  padding: "0 32px",
+                  display: "flex",
+                  alignItems: "center",
+                  backdropFilter: "blur(18px)",
+                  boxShadow: "0 1px 20px rgba(15, 23, 42, 0.04)",
+                }
+          }
         >
-          <Typography.Text type="secondary" style={{ fontSize: 14, fontWeight: 500 }}>
+          <Typography.Text
+            type="secondary"
+            style={defaultAntd ? { fontSize: 14 } : { fontSize: 14, fontWeight: 500 }}
+          >
             多模态大模型价值对齐与纠偏平台
           </Typography.Text>
         </Header>
-        <Content style={{ margin: 32, minHeight: 280 }}>
+        <Content style={defaultAntd ? defaultContentStyle : { margin: 32, minHeight: 280 }}>
           <Outlet />
         </Content>
       </Layout>

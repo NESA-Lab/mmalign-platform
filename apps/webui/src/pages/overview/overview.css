@@ -19,6 +19,11 @@
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.07);
 }
 
+:root.default-antd .overview-header,
+:root.default-antd .overview-alert-summary {
+  display: none;
+}
+
 .overview-title {
   margin: 0 !important;
   color: #172033 !important;
@@ -27,13 +32,13 @@
   letter-spacing: -0.04em;
 }
 
-.overview-header .ant-segmented {
+:root:not(.default-antd) .overview-header .ant-segmented {
   padding: 4px;
   background: rgba(49, 89, 245, 0.08);
   border: 1px solid rgba(49, 89, 245, 0.08);
 }
 
-.overview-header .ant-segmented-item {
+:root:not(.default-antd) .overview-header .ant-segmented-item {
   min-width: 112px;
   font-weight: 600;
 }
@@ -53,8 +58,22 @@
   letter-spacing: -0.03em;
 }
 
-.overview-metric-card .ant-card-body,
-.overview-project-card .ant-card-body {
+:root.default-antd .overview-section-header {
+  margin-bottom: 16px;
+}
+
+:root.default-antd .overview-section-header .ant-select {
+  display: none;
+}
+
+:root.default-antd .overview-section-title {
+  color: rgba(0, 0, 0, 0.88) !important;
+  font-weight: 600 !important;
+  letter-spacing: normal;
+}
+
+:root:not(.default-antd) .overview-metric-card .ant-card-body,
+:root:not(.default-antd) .overview-project-card .ant-card-body {
   padding: 22px 24px;
 }
 
@@ -62,14 +81,14 @@
   height: 100%;
 }
 
-.overview-metric-card .ant-card-body {
+:root:not(.default-antd) .overview-metric-card .ant-card-body {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.overview-metric-card .ant-statistic-title,
-.overview-project-card .ant-statistic-title {
+:root:not(.default-antd) .overview-metric-card .ant-statistic-title,
+:root:not(.default-antd) .overview-project-card .ant-statistic-title {
   margin-bottom: 10px;
 }
 
@@ -78,6 +97,13 @@
   color: #4b5565;
   font-size: 13px;
   font-weight: 700;
+}
+
+:root.default-antd .overview-metric-label,
+:root.default-antd .overview-project-label {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .overview-metric-delta {
@@ -93,11 +119,23 @@
   font-weight: 600;
 }
 
+:root.default-antd .overview-metric-delta {
+  display: block;
+  width: auto;
+  margin-top: 8px;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.45);
+  background: transparent;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 400;
+}
+
 .overview-metric-delta.is-empty {
   visibility: hidden;
 }
 
-.overview-alert-summary .ant-card-body {
+:root:not(.default-antd) .overview-alert-summary .ant-card-body {
   padding: 18px 22px;
 }
 
@@ -160,16 +198,16 @@
   background: #e0e7ff;
 }
 
-.overview-message-drawer .ant-drawer-header {
+:root:not(.default-antd) .overview-message-drawer .ant-drawer-header {
   border-bottom: 1px solid rgba(22, 32, 51, 0.06);
 }
 
-.overview-message-drawer .ant-drawer-body {
+:root:not(.default-antd) .overview-message-drawer .ant-drawer-body {
   padding: 18px;
   background: #f6f8fc;
 }
 
-.overview-message-drawer .ant-list-items {
+:root:not(.default-antd) .overview-message-drawer .ant-list-items {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -201,7 +239,7 @@
   line-height: 1.6;
 }
 
-.overview-milestone-card .ant-card-body {
+:root:not(.default-antd) .overview-milestone-card .ant-card-body {
   padding: 22px;
 }
 
@@ -283,7 +321,7 @@
   line-height: 1.55;
 }
 
-.overview-chart-card .ant-card-body {
+:root:not(.default-antd) .overview-chart-card .ant-card-body {
   padding: 18px 20px 22px;
 }
 
@@ -318,20 +356,20 @@
     padding: 22px;
   }
 
-  .overview-header .ant-segmented {
+  :root:not(.default-antd) .overview-header .ant-segmented {
     width: 100%;
   }
 }
 
 /* Legacy guard in case Ant Design injects tab markup during HMR. */
-.overview-tabs .ant-tabs-nav {
+:root:not(.default-antd) .overview-tabs .ant-tabs-nav {
   margin-bottom: 20px;
 }
 
-.overview-tabs .ant-tabs-nav::before {
+:root:not(.default-antd) .overview-tabs .ant-tabs-nav::before {
   border-bottom: 0 !important;
 }
 
-.overview-tabs .ant-tabs-content-holder {
+:root:not(.default-antd) .overview-tabs .ant-tabs-content-holder {
   border-top: 0 !important;
 }

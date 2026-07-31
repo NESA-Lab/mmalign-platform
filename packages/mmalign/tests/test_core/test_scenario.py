@@ -8,9 +8,14 @@ import pytest
 from mmalign.core.scenario import Sample, Scenario, Specification, SpecCategory
 from mmalign.core.types import GenerationRequest
 
-
-SPECBENCH_CHILD_PATH = Path(
-    "/Users/helium7/projects/project-mm-align/refs/repos/SpecBench/data/Child"
+# In-repo SpecBench-format package (examples/benchmarks/builtin/child).
+# packages/mmalign/tests/test_core → parents[4] = mmalign-platform root
+SPECBENCH_CHILD_PATH = (
+    Path(__file__).resolve().parents[4]
+    / "examples"
+    / "benchmarks"
+    / "builtin"
+    / "child"
 )
 
 

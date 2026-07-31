@@ -14,6 +14,7 @@ import {
 import { CheckCircleOutlined, ClockCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useApi } from "../../hooks/useApi";
+import { isDefaultAntdMode } from "../../utils/defaultAntd";
 import { overviewService } from "../../services/overview";
 import type { MetricDirection, ProjectMetric, ProjectMilestone, ProjectQualityMetric } from "../../types/api";
 
@@ -26,9 +27,14 @@ function targetText(direction: MetricDirection, target: number, unit: string) {
 }
 
 function ProgressMetricCard({ metric }: { metric: ProjectMetric }) {
+  const defaultAntd = isDefaultAntdMode();
   const midtermPct = Math.min((metric.current / metric.target_mid) * 100, 100);
   const finalPct = Math.min((metric.current / metric.target_final) * 100, 100);
   const reachedMid = metric.current >= metric.target_mid;
+  const successColor = defaultAntd ? "#1677ff" : "#16a34a";
+  const warningColor = defaultAntd ? "#1677ff" : "#f59e0b";
+  const primaryColor = defaultAntd ? "#1677ff" : "#3159f5";
+  const trailColor = defaultAntd ? "#e6f4ff" : "#eef2f7";
 
   return (
     <Card className="overview-project-card" bordered={false} hoverable>
@@ -39,14 +45,22 @@ function ProgressMetricCard({ metric }: { metric: ProjectMetric }) {
             <InfoCircleOutlined style={{ color: "#98a2b3" }} />
           </Tooltip>
         </Space>
-        <Statistic value={metric.current} suffix={metric.unit} styles={{ content: { color: "#172033", fontSize: 34, fontWeight: 800 } }} />
+        <Statistic
+          value={metric.current}
+          suffix={metric.unit}
+          styles={{
+            content: defaultAntd
+              ? { color: "rgba(0, 0, 0, 0.88)", fontSize: 30, fontWeight: 600 }
+              : { color: "#172033", fontSize: 34, fontWeight: 800 },
+          }}
+        />
         <div>
           <Typography.Text type="secondary" style={{ fontSize: 12 }}>中期目标 {metric.target_mid}{metric.unit}</Typography.Text>
-          <Progress percent={midtermPct} showInfo={false} strokeColor={reachedMid ? "#16a34a" : "#f59e0b"} trailColor="#eef2f7" />
+          <Progress percent={midtermPct} showInfo={false} strokeColor={reachedMid ? successColor : warningColor} trailColor={trailColor} />
         </div>
         <div>
           <Typography.Text type="secondary" style={{ fontSize: 12 }}>终期目标 {metric.target_final}{metric.unit}</Typography.Text>
-          <Progress percent={finalPct} showInfo={false} strokeColor="#3159f5" trailColor="#eef2f7" />
+          <Progress percent={finalPct} showInfo={false} strokeColor={primaryColor} trailColor={trailColor} />
         </div>
       </Space>
     </Card>
@@ -54,6 +68,7 @@ function ProgressMetricCard({ metric }: { metric: ProjectMetric }) {
 }
 
 function QualityMetricCard({ metric }: { metric: ProjectQualityMetric }) {
+  const defaultAntd = isDefaultAntdMode();
   const reachedMid = passMidterm(metric.value, metric.target_mid, metric.direction);
   const reachedFinal = passMidterm(metric.value, metric.target_final, metric.direction);
 
@@ -66,7 +81,15 @@ function QualityMetricCard({ metric }: { metric: ProjectQualityMetric }) {
             {reachedFinal ? "终期达标" : reachedMid ? "中期达标" : "待提升"}
           </Tag>
         </Space>
-        <Statistic value={metric.value} suffix={metric.unit} styles={{ content: { color: "#172033", fontSize: 34, fontWeight: 800 } }} />
+        <Statistic
+          value={metric.value}
+          suffix={metric.unit}
+          styles={{
+            content: defaultAntd
+              ? { color: "rgba(0, 0, 0, 0.88)", fontSize: 30, fontWeight: 600 }
+              : { color: "#172033", fontSize: 34, fontWeight: 800 },
+          }}
+        />
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>来源：{metric.source}</Typography.Text>
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           中期 {targetText(metric.direction, metric.target_mid, metric.unit)} · 终期 {targetText(metric.direction, metric.target_final, metric.unit)}

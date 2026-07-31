@@ -32,6 +32,7 @@ import type { ReactNode } from "react";
 import type { ColumnsType } from "antd/es/table";
 import { useApi } from "../../hooks/useApi";
 import { downloadCsv, downloadJson } from "../../utils/download";
+import { isDefaultAntdMode } from "../../utils/defaultAntd";
 import { overviewService } from "../../services/overview";
 import type {
   AlertLevel,
@@ -54,6 +55,8 @@ const alertIconMap: Record<AlertLevel, ReactNode> = {
 };
 
 const USER_METRIC_IDS = ["1.1", "1.2", "1.3", "1.6"];
+const DEFAULT_CONTROLLER_CHART_COLORS = ["#1677ff", "#1677ff", "#1677ff"];
+const CUSTOM_CONTROLLER_CHART_COLORS = ["#3159f5", "#ef4444", "#f59e0b"];
 
 const alertLevelLabel: Record<AlertLevel, string> = {
   error: "失败",
@@ -221,6 +224,7 @@ function UserMetricCard({
   metric: IndicatorStatus;
   historyDelta?: string;
 }) {
+  const defaultAntd = isDefaultAntdMode();
   const deltaText = historyDelta ?? metric.delta ?? "";
   return (
     <Card className="overview-metric-card" bordered={false} hoverable>
@@ -234,7 +238,11 @@ function UserMetricCard({
           }
           value={metric.value}
           suffix={metric.unit}
-          styles={{ content: { color: "#172033", fontSize: 34, fontWeight: 800 } }}
+          styles={{
+            content: defaultAntd
+              ? { color: "rgba(0, 0, 0, 0.88)", fontSize: 30, fontWeight: 600 }
+              : { color: "#172033", fontSize: 34, fontWeight: 800 },
+          }}
         />
       </Tooltip>
       <Typography.Text className={`overview-metric-delta${deltaText ? "" : " is-empty"}`}>
@@ -250,33 +258,38 @@ function ControllerTrendChart({ dates, intercept, falsePositive, unsafeRate }: {
   falsePositive: number[];
   unsafeRate: number[];
 }) {
+  const defaultAntd = isDefaultAntdMode();
+  const chartColors = defaultAntd ? DEFAULT_CONTROLLER_CHART_COLORS : CUSTOM_CONTROLLER_CHART_COLORS;
+  const chartTextColor = defaultAntd ? "rgba(0, 0, 0, 0.65)" : "#667085";
+  const chartLineColor = defaultAntd ? "#f0f0f0" : "rgba(22, 32, 51, 0.06)";
+  const chartAxisColor = defaultAntd ? "#d9d9d9" : "rgba(22, 32, 51, 0.08)";
   const option = useMemo(() => ({
-    color: ["#3159f5", "#ef4444", "#f59e0b"],
+    color: chartColors,
     tooltip: {
       trigger: "axis",
-      backgroundColor: "rgba(255, 255, 255, 0.96)",
-      borderColor: "rgba(22, 32, 51, 0.08)",
+      backgroundColor: "#ffffff",
+      borderColor: defaultAntd ? "#d9d9d9" : "rgba(22, 32, 51, 0.08)",
       borderWidth: 1,
-      textStyle: { color: "#172033" },
+      textStyle: { color: defaultAntd ? "rgba(0, 0, 0, 0.88)" : "#172033" },
     },
     legend: {
       data: ["拦截率", "误拦率", "不安全生成率"],
       top: 0,
-      icon: "roundRect",
-      textStyle: { color: "#667085", fontWeight: 600 },
+      icon: defaultAntd ? "circle" : "roundRect",
+      textStyle: { color: chartTextColor, fontWeight: defaultAntd ? 400 : 600 },
     },
     grid: { top: 44, bottom: 24, left: 48, right: 16 },
     xAxis: {
       type: "category",
       data: dates,
-      axisLine: { lineStyle: { color: "rgba(22, 32, 51, 0.08)" } },
+      axisLine: { lineStyle: { color: chartAxisColor } },
       axisTick: { show: false },
       axisLabel: { formatter: (v: string) => v.slice(5), interval: 4 },
     },
     yAxis: {
       type: "value",
-      axisLabel: { formatter: "{value}%", color: "#98a2b3" },
-      splitLine: { lineStyle: { color: "rgba(22, 32, 51, 0.06)", type: "dashed" } },
+      axisLabel: { formatter: "{value}%", color: chartTextColor },
+      splitLine: { lineStyle: { color: chartLineColor, type: defaultAntd ? "solid" : "dashed" } },
     },
     series: [
       {
@@ -295,8 +308,8 @@ function ControllerTrendChart({ dates, intercept, falsePositive, unsafeRate }: {
             x2: 0,
             y2: 1,
             colorStops: [
-              { offset: 0, color: "rgba(49, 89, 245, 0.18)" },
-              { offset: 1, color: "rgba(49, 89, 245, 0)" },
+              { offset: 0, color: defaultAntd ? "rgba(22, 119, 255, 0.12)" : "rgba(49, 89, 245, 0.18)" },
+              { offset: 1, color: defaultAntd ? "rgba(22, 119, 255, 0)" : "rgba(49, 89, 245, 0)" },
             ],
           },
         },
@@ -304,12 +317,23 @@ function ControllerTrendChart({ dates, intercept, falsePositive, unsafeRate }: {
       { name: "误拦率", type: "line", data: falsePositive, smooth: true, symbolSize: 5, lineStyle: { width: 2.5 } },
       { name: "不安全生成率", type: "line", data: unsafeRate, smooth: true, symbolSize: 5, lineStyle: { width: 2.5 } },
     ],
-  }), [dates, intercept, falsePositive, unsafeRate]);
+  }), [
+    chartAxisColor,
+    chartColors,
+    chartLineColor,
+    chartTextColor,
+    dates,
+    defaultAntd,
+    falsePositive,
+    intercept,
+    unsafeRate,
+  ]);
 
   return <ReactECharts option={option} style={{ height: 310 }} />;
 }
 
 function SafetyHeatmapChart({ scores }: { scores: { scenario: string; model: string; safety: number }[] }) {
+  const defaultAntd = isDefaultAntdMode();
   const scenarios = useMemo(() => [...new Set(scores.map((s) => s.scenario))], [scores]);
   const models = useMemo(() => [...new Set(scores.map((s) => s.model))], [scores]);
   const data = useMemo(
@@ -319,9 +343,9 @@ function SafetyHeatmapChart({ scores }: { scores: { scenario: string; model: str
 
   const option = useMemo(() => ({
     tooltip: {
-      backgroundColor: "rgba(255, 255, 255, 0.96)",
-      borderColor: "rgba(22, 32, 51, 0.08)",
-      textStyle: { color: "#172033" },
+      backgroundColor: "#ffffff",
+      borderColor: defaultAntd ? "#d9d9d9" : "rgba(22, 32, 51, 0.08)",
+      textStyle: { color: defaultAntd ? "rgba(0, 0, 0, 0.88)" : "#172033" },
       formatter: (params: { data: [number, number, number] }) => {
         const [mi, si, score] = params.data;
         return `${models[mi]} × ${scenarios[si]}<br/>Safety: <b>${formatPercent(score)}</b>`;
@@ -335,7 +359,7 @@ function SafetyHeatmapChart({ scores }: { scores: { scenario: string; model: str
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {
-        color: "#667085",
+        color: defaultAntd ? "rgba(0, 0, 0, 0.65)" : "#667085",
         fontSize: 11,
         interval: 0,
         lineHeight: 14,
@@ -350,7 +374,12 @@ function SafetyHeatmapChart({ scores }: { scores: { scenario: string; model: str
       data: scenarios,
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { color: "#667085", fontSize: 12, fontWeight: 600, margin: 12 },
+      axisLabel: {
+        color: defaultAntd ? "rgba(0, 0, 0, 0.65)" : "#667085",
+        fontSize: 12,
+        fontWeight: defaultAntd ? 400 : 600,
+        margin: 12,
+      },
       splitArea: { show: true },
     },
     visualMap: {
@@ -362,23 +391,36 @@ function SafetyHeatmapChart({ scores }: { scores: { scenario: string; model: str
       top: "middle",
       itemHeight: 140,
       text: ["高", "低"],
-      textStyle: { color: "#667085" },
-      inRange: { color: ["#eef4ff", "#bfdbfe", "#60a5fa", "#1d4ed8"] },
+      textStyle: { color: defaultAntd ? "rgba(0, 0, 0, 0.65)" : "#667085" },
+      inRange: {
+        color: defaultAntd
+          ? ["#e6f4ff", "#1677ff"]
+          : ["#eef4ff", "#bfdbfe", "#60a5fa", "#1d4ed8"],
+      },
     },
     series: [{
       type: "heatmap",
       data,
       label: {
         show: true,
-        color: "#172033",
+        color: defaultAntd ? "rgba(0, 0, 0, 0.88)" : "#172033",
         fontSize: 11,
-        fontWeight: 700,
+        fontWeight: defaultAntd ? 400 : 700,
         formatter: (p: { data: [number, number, number] }) => formatPercent(p.data[2]),
       },
-      itemStyle: { borderColor: "#ffffff", borderWidth: 4, borderRadius: 8 },
-      emphasis: { itemStyle: { shadowBlur: 12, shadowColor: "rgba(49, 89, 245, 0.25)" } },
+      itemStyle: {
+        borderColor: "#ffffff",
+        borderWidth: defaultAntd ? 1 : 4,
+        borderRadius: defaultAntd ? 0 : 8,
+      },
+      emphasis: {
+        itemStyle: {
+          shadowBlur: defaultAntd ? 0 : 12,
+          shadowColor: defaultAntd ? "transparent" : "rgba(49, 89, 245, 0.25)",
+        },
+      },
     }],
-  }), [data, models, scenarios]);
+  }), [data, defaultAntd, models, scenarios]);
 
   return <ReactECharts option={option} style={{ height: 330 }} />;
 }

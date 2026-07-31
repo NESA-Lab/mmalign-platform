@@ -3,7 +3,7 @@ name = "mmalign-api"
 version = "0.1.0"
 description = "MMAlign REST API — FastAPI presentation layer"
 requires-python = ">=3.12"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 dependencies = [
     "mmalign",
     "fastapi>=0.136.1",

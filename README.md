@@ -1,5 +1,7 @@
 # MMAlign Platform Monorepo
 
+Licensed under the [Apache License 2.0](LICENSE).
+
 ## Layout
 
 ```text
@@ -20,26 +22,37 @@ mmalign-platform/
 
 ```bash
 pnpm install
-uv sync --package mmalign --extra dev
+uv sync --all-packages --extra dev
 ./scripts/setup-data.sh
 ```
 
+Requires [pnpm](https://pnpm.io/) and [uv](https://docs.astral.sh/uv/) on `PATH`.
+
 ## Paths
 
-| Purpose | Dev (default) | Deploy |
-|---------|---------------|--------|
-| Workspace | `./data/` | `MMALIGN_USE_XDG=1` → `~/.local/share/mmalign/data/` |
-| Datasets | `data/benchmarks/` | under workspace |
-| Results | `data/results/` | under workspace (or `MMALIGN_RESULTS_DIR`) |
+| Purpose   | Dev (default)      | Deploy                                               |
+| --------- | ------------------ | ---------------------------------------------------- |
+| Workspace | `./data/`          | `MMALIGN_USE_XDG=1` → `~/.local/share/mmalign/data/` |
+| Datasets  | `data/benchmarks/` | under workspace                                      |
+| Results   | `data/results/`    | under workspace (or `MMALIGN_RESULTS_DIR`)           |
 
 ## Commands
 
+CLI entry point lives in the `mmalign-cli` package (not `mmalign`).
+
 ```bash
-pnpm dev
-pnpm test
-uv run --package mmalign-cli mmalign seed --reset --scale large   # generate the mock corpus
-uv run --package mmalign mmalign benchmark -m gpt-4.1 -s education
-uv run --package mmalign mmalign serve
+pnpm dev    # API (:8000) + WebUI (Vite)
+pnpm test   # core pytest + webui typecheck
+
+uv run --package mmalign-cli mmalign seed --reset --scale small   # mock corpus (use large for denser demo)
+uv run --package mmalign-cli mmalign benchmark -m mock -s education -n 2 --evaluator mock_judge
+uv run --package mmalign-cli mmalign serve                        # API only; docs at /api/docs
+```
+
+For a real model (needs `OPENAI_API_KEY` or the env named in `configs/models.yaml`):
+
+```bash
+uv run --package mmalign-cli mmalign benchmark -m gpt-4.1 -s education
 ```
 
 ## Mock data

@@ -3,7 +3,7 @@ name = "mmalign-cli"
 version = "0.1.0"
 description = "MMAlign CLI — Typer presentation layer"
 requires-python = ">=3.12"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 dependencies = [
     "mmalign",
     "mmalign-api",
