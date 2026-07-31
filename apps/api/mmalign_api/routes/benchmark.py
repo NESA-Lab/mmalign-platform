@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import traceback
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import yaml
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from mmalign_api.deps import get_configs_dir, get_results_dir, get_store
 from mmalign_api.schemas import (
@@ -29,6 +30,7 @@ from mmalign.core.store import FileResultStore, RunNotFoundError
 from mmalign.core.store import new_run_id
 
 router = APIRouter(tags=["benchmark"])
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -291,6 +293,38 @@ async def upload_results(
             sample_count=int(s.get("sample_count", len(req.samples))),
             error_count=int(s.get("error_count", 0)),
         )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "INVALID_SUMMARY", "message": str(exc)},
+        ) from exc
+
+    samples: list[SampleResult] = []
+    for raw_sample in req.samples:
+        try:
+            samples.append(
+                SampleResult.model_validate(
+                    {
+                        "run_id": req.run_id,
+                        "scenario_id": req.scenario,
+                        "model": req.model,
+                        "method": req.method,
+                        "evaluator": req.evaluator,
+                        **raw_sample,
+                    }
+                )
+            )
+        except Exception as exc:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "code": "INVALID_SAMPLE",
+                    "message": f"Invalid sample for run {req.run_id}: {exc}",
+                },
+            ) from exc
+
+    try:
+        store.delete_run(req.run_id)
     except Exception:
         pass
 
@@ -305,6 +339,9 @@ async def upload_results(
         summary=summary,
     )
     store.save_run(run)
+
+    for sample in samples:
+        store.append_sample_result(sample)
 
     return UploadResultsResponse(run_id=req.run_id, ok=True)
 
@@ -323,6 +360,7 @@ async def _run_benchmark_task(
     store = FRS(results_dir)
     try:
         await engine.run_benchmark(
+            run_id=run_id,
             model=req.model,
             scenario=req.scenario,
             method=req.method,
@@ -332,5 +370,30 @@ async def _run_benchmark_task(
             result_store=store,
         )
     except Exception:
-        # Engine already updates the run to failed; just log
-        pass
+        logger.exception("Benchmark background task failed for run_id=%s", run_id)
+        try:
+            run = store.get_run(run_id)
+        except Exception:
+            run = BenchmarkRun(
+                run_id=run_id,
+                status="pending",
+                scenario=req.scenario,
+                model=req.model,
+                method=req.method,
+                evaluator=req.evaluator,
+                sample_limit=req.sample_limit,
+                metadata={"benchmark_origin": req.benchmark_origin}
+                if req.benchmark_origin
+                else {},
+            )
+        failed = run.model_copy(
+            update={
+                "status": "failed",
+                "completed_at": datetime.now(tz=timezone.utc),
+                "metadata": {
+                    **run.metadata,
+                    "error": traceback.format_exc(),
+                },
+            }
+        )
+        store.save_run(failed)

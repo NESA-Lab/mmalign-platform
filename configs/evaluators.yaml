@@ -19,6 +19,15 @@ evaluators:
     retries: 2
     strict_json: true
 
+  llm_judge_gpt4o:
+    type: llm_judge
+    judge_model: gpt-4o
+    mode: joint
+    temperature: 0
+    max_output_tokens: 2048
+    retries: 2
+    strict_json: true
+
   mock_judge:
     type: mock_judge
     deterministic: true

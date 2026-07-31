@@ -21,6 +21,7 @@ the API route and the feedback-loop engine do not need to branch.
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 import uuid
 from dataclasses import dataclass, field
@@ -172,7 +173,9 @@ class CalibrationEngine:
             )
 
         # Step 2: write the focus JSONL file.
-        focus_path = Path(tempfile.mkstemp(prefix="mmalign-focus-", suffix=".jsonl")[1])
+        fd, focus_name = tempfile.mkstemp(prefix="mmalign-focus-", suffix=".jsonl")
+        os.close(fd)
+        focus_path = Path(focus_name)
         try:
             with focus_path.open("w", encoding="utf-8") as f:
                 for rec in failing_records:

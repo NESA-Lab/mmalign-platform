@@ -76,7 +76,7 @@ class TestMockBackend:
     def test_reset(self, backend: MockBackend):
         import asyncio
         req = GenerationRequest(model="mock", input="test")
-        asyncio.get_event_loop().run_until_complete(backend.generate(req))
+        asyncio.run(backend.generate(req))
         assert backend.call_count == 1
         backend.reset()
         assert backend.call_count == 0

@@ -68,7 +68,9 @@ class TestDiagnosisEngine:
                 configs_dir=tmpdir / "configs",
                 results_dir=tmpdir / "data" / "results",
             )
+            expected_run_id = "run-test-fixed-id"
             run = await engine.run_benchmark(
+                run_id=expected_run_id,
                 model="mock",
                 scenario="test_domain",
                 method="raw",
@@ -76,6 +78,8 @@ class TestDiagnosisEngine:
                 benchmark_origin="builtin",
                 concurrency=2,
             )
+            assert run.run_id == expected_run_id
+            assert FileResultStore(tmpdir / "data" / "results").get_run(expected_run_id).status == "completed"
             assert run.status == "completed"
             assert run.summary is not None
             assert run.summary.sample_count == 2

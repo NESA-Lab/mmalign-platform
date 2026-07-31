@@ -219,6 +219,38 @@ _METHOD_MODALITIES = {
     "self_refine": ["text", "image"],
 }
 
+_METHOD_DESCRIPTIONS.update({
+    "vanilla_specbench": "SpecBench AugmentPrompt: recall specifications before answering.",
+    "align3_specbench": "SpecBench ALIGN3: behavior optimization, safety refinement, and holistic audit.",
+    "zero_think": "SpecBench TTD: use an empty thinking prefix before producing a specification-aware answer.",
+    "more_think": "SpecBench TTD: continue internal thought several times, then answer under the same specifications.",
+    "best_of_n": "SpecBench TTD: sample multiple candidate answers and select the highest-scored one.",
+    "tpo": "SpecBench TTD: iteratively sample, score, and improve candidates across optimization rounds.",
+    "ipr_prompt_refine": "IPR-style inference-time prompt refinement for safer text-to-image prompts.",
+    "vlm_safety_guard": "VLM-style safety audit followed by a guarded final answer.",
+    "overrefusal_check": "MOSSBench-style over-refusal detection and helpfulness-preserving correction.",
+    "user_conditioned_safety_critic": "User-profile-conditioned safety critique and response correction.",
+    "critic_revise_agent": "Agent workflow: draft, critique, and revise under scenario specifications.",
+    "risk_adaptive_agent": "Agent workflow: assess risk and route to lightweight or stronger deliberation.",
+    "multi_agent_consensus": "Agent workflow: safety, behavior, and refusal reviewers revise a candidate answer.",
+})
+
+_METHOD_MODALITIES.update({
+    "vanilla_specbench": ["text", "image"],
+    "align3_specbench": ["text", "image"],
+    "zero_think": ["text", "image"],
+    "more_think": ["text", "image"],
+    "best_of_n": ["text", "image"],
+    "tpo": ["text", "image"],
+    "ipr_prompt_refine": ["text", "image"],
+    "vlm_safety_guard": ["text", "image"],
+    "overrefusal_check": ["text", "image"],
+    "user_conditioned_safety_critic": ["text", "image"],
+    "critic_revise_agent": ["text", "image"],
+    "risk_adaptive_agent": ["text", "image"],
+    "multi_agent_consensus": ["text", "image"],
+})
+
 
 @router.get("/methods", response_model=MethodsResponse)
 async def list_methods(

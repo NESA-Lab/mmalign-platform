@@ -80,6 +80,7 @@ class DiagnosisEngine:
         *,
         model: str,
         scenario: str,
+        run_id: str | None = None,
         method: str = "align3",
         evaluator: str = "llm_judge",
         benchmark_origin: str | None = None,
@@ -91,7 +92,7 @@ class DiagnosisEngine:
     ) -> BenchmarkRun:
         """Run a full benchmark evaluation and return the completed BenchmarkRun."""
         store = result_store or FileResultStore(self._results)
-        run_id = new_run_id()
+        run_id = run_id or new_run_id()
 
         run = BenchmarkRun(
             run_id=run_id,

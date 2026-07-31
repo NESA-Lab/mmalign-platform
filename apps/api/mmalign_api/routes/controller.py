@@ -6,7 +6,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends
 
-from mmalign_api.deps import get_configs_dir
+from mmalign_api.deps import get_configs_dir, get_workspace_dir
 from mmalign_api.schemas import (
     ControlAttemptOut,
     ControllerGenerateRequest,
@@ -21,6 +21,7 @@ router = APIRouter(tags=["controller"])
 async def controller_generate(
     req: ControllerGenerateRequest,
     configs_dir: Path = Depends(get_configs_dir),
+    workspace: Path = Depends(get_workspace_dir),
 ) -> ControllerGenerateResponse:
     """Run ComplianceController on a single prompt.
 
@@ -48,6 +49,7 @@ async def controller_generate(
         req.scenario,
         origin=req.benchmark_origin,
         sample_limit=0,
+        workspace_start=workspace,
     )
 
     # Load operator-configured policy (risk thresholds + strategy mapping)
@@ -56,9 +58,11 @@ async def controller_generate(
     # Build request
     gen_req = GenerationRequest(model=req.model, input=req.input)
 
-    # Raw generation (for comparison)
-    raw_result = await backend.generate(gen_req)
-    raw_text = raw_result.text()
+    # Raw generation is useful for demos, but doubles model cost and latency.
+    raw_text = ""
+    if req.raw_compare:
+        raw_result = await backend.generate(gen_req)
+        raw_text = raw_result.text()
 
     # Run controller with the loaded policy
     controller = ComplianceController(backend=backend, scenario=scenario, policy=policy)

@@ -104,10 +104,95 @@ def _register_builtins() -> None:
             temperature=cfg.get("temperature", 0.3),
         )
 
+    def _make_zero_think(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import ZeroThinkMethod
+        return ZeroThinkMethod(temperature=cfg.get("temperature", 0.2))
+
+    def _make_vanilla_specbench(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import VanillaSpecBenchMethod
+        return VanillaSpecBenchMethod(temperature=cfg.get("temperature", 0.2))
+
+    def _make_align3_specbench(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import Align3SpecBenchMethod
+        return Align3SpecBenchMethod(
+            temperature=cfg.get("temperature", 0.2),
+            max_stage_tokens=cfg.get("max_stage_tokens", 1024),
+        )
+
+    def _make_more_think(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import MoreThinkMethod
+        return MoreThinkMethod(
+            rethink_count=cfg.get("rethink_count", 3),
+            temperature=cfg.get("temperature", 0.2),
+        )
+
+    def _make_best_of_n(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import BestOfNMethod
+        return BestOfNMethod(
+            n=cfg.get("n", 4),
+            temperature=cfg.get("temperature", 0.7),
+        )
+
+    def _make_tpo(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import TPOMethod
+        return TPOMethod(
+            iterations=cfg.get("iterations", 2),
+            sample_size=cfg.get("sample_size", 3),
+            temperature=cfg.get("temperature", 0.7),
+        )
+
+    def _make_ipr_prompt_refine(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import IPRPromptRefineMethod
+        return IPRPromptRefineMethod(
+            iterations=cfg.get("iterations", 3),
+            temperature=cfg.get("temperature", 0.2),
+        )
+
+    def _make_vlm_safety_guard(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import VLMSafetyGuardMethod
+        return VLMSafetyGuardMethod(temperature=cfg.get("temperature", 0.2))
+
+    def _make_overrefusal_check(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import OverRefusalCheckMethod
+        return OverRefusalCheckMethod(temperature=cfg.get("temperature", 0.2))
+
+    def _make_user_conditioned_safety_critic(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import UserConditionedSafetyCriticMethod
+        return UserConditionedSafetyCriticMethod(temperature=cfg.get("temperature", 0.2))
+
+    def _make_critic_revise_agent(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import CriticReviseAgentMethod
+        return CriticReviseAgentMethod(temperature=cfg.get("temperature", 0.2))
+
+    def _make_risk_adaptive_agent(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import RiskAdaptiveAgentMethod
+        return RiskAdaptiveAgentMethod(temperature=cfg.get("temperature", 0.2))
+
+    def _make_multi_agent_consensus(cfg: dict[str, Any]) -> Any:
+        from mmalign.methods.specbench_ttd import MultiAgentConsensusMethod
+        return MultiAgentConsensusMethod(temperature=cfg.get("temperature", 0.2))
+
     inference_align_registry.register("raw", _make_raw, builtin=True)
     inference_align_registry.register("vanilla", _make_vanilla, builtin=True)
     inference_align_registry.register("align3", _make_align3, builtin=True)
     inference_align_registry.register("self_refine", _make_self_refine, builtin=True)
+    inference_align_registry.register("zero_think", _make_zero_think, builtin=True)
+    inference_align_registry.register("vanilla_specbench", _make_vanilla_specbench, builtin=True)
+    inference_align_registry.register("align3_specbench", _make_align3_specbench, builtin=True)
+    inference_align_registry.register("more_think", _make_more_think, builtin=True)
+    inference_align_registry.register("best_of_n", _make_best_of_n, builtin=True)
+    inference_align_registry.register("tpo", _make_tpo, builtin=True)
+    inference_align_registry.register("ipr_prompt_refine", _make_ipr_prompt_refine, builtin=True)
+    inference_align_registry.register("vlm_safety_guard", _make_vlm_safety_guard, builtin=True)
+    inference_align_registry.register("overrefusal_check", _make_overrefusal_check, builtin=True)
+    inference_align_registry.register(
+        "user_conditioned_safety_critic",
+        _make_user_conditioned_safety_critic,
+        builtin=True,
+    )
+    inference_align_registry.register("critic_revise_agent", _make_critic_revise_agent, builtin=True)
+    inference_align_registry.register("risk_adaptive_agent", _make_risk_adaptive_agent, builtin=True)
+    inference_align_registry.register("multi_agent_consensus", _make_multi_agent_consensus, builtin=True)
 
     # Evaluators — only register those that don't need a judge backend.
     # ``llm_judge`` resolves through the legacy loader path because it

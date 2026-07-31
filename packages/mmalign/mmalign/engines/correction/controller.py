@@ -227,6 +227,7 @@ def load_controller_from_config(
     model: str,
     scenario_id: str,
     configs_dir: Path,
+    workspace_start: Path | None = None,
 ) -> ComplianceController:
     """Factory: load backend + scenario + policy from YAML configs.
 
@@ -240,6 +241,11 @@ def load_controller_from_config(
 
     backends = load_backends(configs_dir / "models.yaml")
     backend = backends[model]
-    scenario, _ = load_scenario(scenario_id, origin=None, sample_limit=0)
+    scenario, _ = load_scenario(
+        scenario_id,
+        origin=None,
+        sample_limit=0,
+        workspace_start=workspace_start or configs_dir.parent,
+    )
     policy = load_policy_from_yaml(scenario_id, configs_dir)
     return ComplianceController(backend=backend, scenario=scenario, policy=policy)

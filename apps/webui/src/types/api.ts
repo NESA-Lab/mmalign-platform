@@ -508,6 +508,7 @@ export interface ControllerGenerateRequest {
   method?: string;
   evaluator?: string;
   debug?: boolean;
+  raw_compare?: boolean;
 }
 
 export interface RiskAssessmentOut {

@@ -210,7 +210,7 @@ export default function DemoPage() {
       return;
     }
     const res = await mutate(() =>
-      demoService.controllerGenerate({ model, scenario, input: prompt, method }),
+      demoService.controllerGenerate({ model, scenario, input: prompt, method, raw_compare: true }),
     );
     if (res) setResult(res);
   };

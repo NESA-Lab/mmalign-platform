@@ -29,10 +29,10 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Depends, Header, HTTPException
+from pydantic import BaseModel
 
-from mmalign_api.deps import get_configs_dir
+from mmalign_api.deps import get_configs_dir, get_workspace_dir
 
 router = APIRouter(tags=["openai-compat"])
 
@@ -142,9 +142,11 @@ def _clean_model(model: str) -> str:
 async def _run_controller(
     model_id: str,
     scenario: str,
-    input_text: str,
+    generation_input: str | list[Any],
     temperature: float | None,
+    max_output_tokens: int | None,
     configs_dir: Path,
+    workspace: Path,
 ) -> tuple[str, dict[str, int], float]:
     """Run ComplianceController and return (aligned_text, usage, latency_ms)."""
     from mmalign.backends.loader import load_backends
@@ -168,7 +170,11 @@ async def _run_controller(
         )
 
     try:
-        loaded_scenario, _ = load_scenario(scenario, sample_limit=0)
+        loaded_scenario, _ = load_scenario(
+            scenario,
+            sample_limit=0,
+            workspace_start=workspace,
+        )
     except Exception:
         raise HTTPException(
             status_code=400,
@@ -183,8 +189,9 @@ async def _run_controller(
 
     gen_req = GenerationRequest(
         model=model_id,
-        input=input_text,
+        input=generation_input,
         temperature=temperature,
+        max_output_tokens=max_output_tokens,
     )
 
     policy = load_policy_from_yaml(scenario, configs_dir)
@@ -203,6 +210,13 @@ async def _run_controller(
     return aligned_text, usage, controlled.latency_ms
 
 
+def _usage_total(usage: dict[str, int], input_key: str, output_key: str) -> int:
+    total = usage.get("total_tokens", 0)
+    if total:
+        return total
+    return usage.get(input_key, 0) + usage.get(output_key, 0)
+
+
 # ---------------------------------------------------------------------------
 # POST /v1/chat/completions
 # ---------------------------------------------------------------------------
@@ -212,6 +226,7 @@ async def chat_completions(
     req: ChatCompletionsRequest,
     x_mmalign_scenario: str | None = Header(default=None, alias="X-MMAlign-Scenario"),
     configs_dir: Path = Depends(get_configs_dir),
+    workspace: Path = Depends(get_workspace_dir),
 ) -> ChatCompletionsResponse:
     """OpenAI Chat Completions-compatible endpoint with MMAlign compliance control.
 
@@ -240,17 +255,17 @@ async def chat_completions(
             },
         )
 
-    # Extract text from the last user message
-    input_text = _extract_text_from_messages(req.messages)
     model_id = _clean_model(req.model)
     scenario = _resolve_scenario(req.model, req.mmalign_scenario, x_mmalign_scenario)
 
     aligned_text, usage, _latency = await _run_controller(
         model_id=model_id,
         scenario=scenario,
-        input_text=input_text,
+        generation_input=_chat_messages_to_generation_input(req.messages),
         temperature=req.temperature,
+        max_output_tokens=req.max_tokens,
         configs_dir=configs_dir,
+        workspace=workspace,
     )
 
     return ChatCompletionsResponse(
@@ -265,7 +280,7 @@ async def chat_completions(
         usage=ChatUsage(
             prompt_tokens=usage.get("input_tokens", usage.get("prompt_tokens", 0)),
             completion_tokens=usage.get("output_tokens", usage.get("completion_tokens", 0)),
-            total_tokens=usage.get("total_tokens", 0),
+            total_tokens=_usage_total(usage, "input_tokens", "output_tokens"),
         ),
     )
 
@@ -279,6 +294,7 @@ async def responses(
     req: ResponsesRequest,
     x_mmalign_scenario: str | None = Header(default=None, alias="X-MMAlign-Scenario"),
     configs_dir: Path = Depends(get_configs_dir),
+    workspace: Path = Depends(get_workspace_dir),
 ) -> ResponsesResponse:
     """OpenAI Responses API-compatible endpoint with MMAlign compliance control.
 
@@ -293,24 +309,17 @@ async def responses(
             input="Tell me about biology.",
         )
     """
-    # Normalise input to string
-    if isinstance(req.input, str):
-        input_text = req.input
-    elif isinstance(req.input, list):
-        # Extract text from first user content part
-        input_text = _extract_text_from_messages_raw(req.input)
-    else:
-        input_text = str(req.input)
-
     model_id = _clean_model(req.model)
     scenario = _resolve_scenario(req.model, req.mmalign_scenario, x_mmalign_scenario)
 
     aligned_text, usage, _latency = await _run_controller(
         model_id=model_id,
         scenario=scenario,
-        input_text=input_text,
+        generation_input=_responses_input_to_generation_input(req.input),
         temperature=req.temperature,
+        max_output_tokens=req.max_output_tokens,
         configs_dir=configs_dir,
+        workspace=workspace,
     )
 
     return ResponsesResponse(
@@ -325,45 +334,86 @@ async def responses(
         usage=ResponsesUsage(
             input_tokens=usage.get("input_tokens", usage.get("prompt_tokens", 0)),
             output_tokens=usage.get("output_tokens", usage.get("completion_tokens", 0)),
-            total_tokens=usage.get("total_tokens", 0),
+            total_tokens=_usage_total(usage, "input_tokens", "output_tokens"),
         ),
     )
 
 
 # ---------------------------------------------------------------------------
-# Text extraction helpers
+# Request conversion helpers
 # ---------------------------------------------------------------------------
 
-def _extract_text_from_messages(messages: list[ChatMessage]) -> str:
-    """Extract the last user message's text content."""
-    for msg in reversed(messages):
-        if msg.role == "user":
-            if isinstance(msg.content, str):
-                return msg.content
-            return " ".join(
-                part.get("text", "") for part in msg.content
-                if isinstance(part, dict) and part.get("type") in ("text", "input_text")
-            )
-    # Fall back to last assistant message if no user message
-    if messages:
-        last = messages[-1]
-        return last.content if isinstance(last.content, str) else str(last.content)
-    return ""
+def _coerce_role(role: str) -> str:
+    return role if role in {"system", "developer", "user", "assistant"} else "user"
 
 
-def _extract_text_from_messages_raw(messages: list[dict[str, Any]]) -> str:
-    """Extract text from raw OpenAI Responses API input array."""
-    for msg in reversed(messages):
-        if not isinstance(msg, dict):
+def _content_parts_from_openai(content: Any) -> list[dict[str, Any]]:
+    if isinstance(content, str):
+        return [{"type": "input_text", "text": content}]
+    if not isinstance(content, list):
+        return [{"type": "input_text", "text": "" if content is None else str(content)}]
+
+    parts: list[dict[str, Any]] = []
+    for part in content:
+        if not isinstance(part, dict):
             continue
-        role = msg.get("role", "")
-        content = msg.get("content", "")
-        if role == "user":
-            if isinstance(content, str):
-                return content
-            if isinstance(content, list):
-                return " ".join(
-                    part.get("text", "") for part in content
-                    if isinstance(part, dict) and part.get("type") in ("input_text", "text")
+        ptype = part.get("type")
+        if ptype in {"text", "input_text", "output_text"}:
+            parts.append({"type": "input_text", "text": str(part.get("text", ""))})
+        elif ptype in {"image_url", "input_image"}:
+            image_url = part.get("image_url")
+            if isinstance(image_url, dict):
+                image_url = image_url.get("url")
+            if image_url:
+                parts.append(
+                    {
+                        "type": "input_image",
+                        "image_url": str(image_url),
+                        "detail": part.get("detail", "auto"),
+                    }
                 )
-    return str(messages) if messages else ""
+        elif ptype in {"input_audio"} and part.get("input_audio"):
+            parts.append({"type": "input_audio", "input_audio": part["input_audio"]})
+    return parts or [{"type": "input_text", "text": str(content)}]
+
+
+def _chat_messages_to_generation_input(messages: list[ChatMessage]) -> list[dict[str, Any]]:
+    return [
+        {
+            "role": _coerce_role(msg.role),
+            "content": _content_parts_from_openai(msg.content),
+        }
+        for msg in messages
+    ]
+
+
+def _responses_input_to_generation_input(inp: str | list[dict[str, Any]]) -> str | list[dict[str, Any]]:
+    if isinstance(inp, str):
+        return inp
+
+    converted: list[dict[str, Any]] = []
+    for item in inp:
+        if not isinstance(item, dict):
+            continue
+        if "role" in item:
+            converted.append(
+                {
+                    "role": _coerce_role(str(item.get("role", "user"))),
+                    "content": _content_parts_from_openai(item.get("content", "")),
+                }
+            )
+        elif item.get("type") in {"message"}:
+            converted.append(
+                {
+                    "role": _coerce_role(str(item.get("role", "user"))),
+                    "content": _content_parts_from_openai(item.get("content", "")),
+                }
+            )
+        else:
+            converted.append(
+                {
+                    "role": "user",
+                    "content": _content_parts_from_openai([item]),
+                }
+            )
+    return converted or str(inp)

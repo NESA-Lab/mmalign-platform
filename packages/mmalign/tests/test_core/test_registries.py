@@ -27,8 +27,26 @@ class TestBuiltinRegistration:
         assert "vanilla" in inference_align_registry
         assert "align3" in inference_align_registry
         assert "self_refine" in inference_align_registry
+        assert "vanilla_specbench" in inference_align_registry
+        assert "align3_specbench" in inference_align_registry
+        assert "zero_think" in inference_align_registry
+        assert "more_think" in inference_align_registry
+        assert "best_of_n" in inference_align_registry
+        assert "tpo" in inference_align_registry
+        assert "ipr_prompt_refine" in inference_align_registry
+        assert "vlm_safety_guard" in inference_align_registry
+        assert "overrefusal_check" in inference_align_registry
+        assert "user_conditioned_safety_critic" in inference_align_registry
+        assert "critic_revise_agent" in inference_align_registry
+        assert "risk_adaptive_agent" in inference_align_registry
+        assert "multi_agent_consensus" in inference_align_registry
         assert set(inference_align_registry.list_builtins()) >= {
             "raw", "vanilla", "align3", "self_refine",
+            "vanilla_specbench", "align3_specbench", "zero_think",
+            "more_think", "best_of_n", "tpo", "ipr_prompt_refine",
+            "vlm_safety_guard", "overrefusal_check",
+            "user_conditioned_safety_critic", "critic_revise_agent",
+            "risk_adaptive_agent", "multi_agent_consensus",
         }
 
     def test_evaluator_builtins_present(self) -> None:
@@ -113,6 +131,23 @@ class TestLoadMethodConsultsRegistry:
         )
         instance = load_method("align3", cfg_path)
         assert isinstance(instance, Align3Method)
+
+    def test_specbench_ttd_builtin_method_loads(self, tmp_path: Path) -> None:
+        from mmalign.loaders.methods import load_method
+        from mmalign.methods.specbench_ttd import Align3SpecBenchMethod, BestOfNMethod
+
+        cfg_path = tmp_path / "methods.yaml"
+        cfg_path.write_text(
+            yaml.dump({
+                "methods": {
+                    "best_of_n": {"type": "best_of_n", "n": 2},
+                    "align3_specbench": {"type": "align3_specbench"},
+                }
+            }),
+            encoding="utf-8",
+        )
+        assert isinstance(load_method("best_of_n", cfg_path), BestOfNMethod)
+        assert isinstance(load_method("align3_specbench", cfg_path), Align3SpecBenchMethod)
 
     def test_unknown_type_raises_with_helpful_message(self, tmp_path: Path) -> None:
         from mmalign.loaders.methods import UnknownMethodError, load_method

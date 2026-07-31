@@ -82,8 +82,80 @@ def _build_method(method_id: str, method_type: str, cfg: dict[str, Any]) -> Infe
             temperature=cfg.get("temperature", 0.3),
         )
 
+    if method_type == "zero_think":
+        from mmalign.methods.specbench_ttd import ZeroThinkMethod
+        return ZeroThinkMethod(temperature=cfg.get("temperature", 0.2))
+
+    if method_type == "vanilla_specbench":
+        from mmalign.methods.specbench_ttd import VanillaSpecBenchMethod
+        return VanillaSpecBenchMethod(temperature=cfg.get("temperature", 0.2))
+
+    if method_type == "align3_specbench":
+        from mmalign.methods.specbench_ttd import Align3SpecBenchMethod
+        return Align3SpecBenchMethod(
+            temperature=cfg.get("temperature", 0.2),
+            max_stage_tokens=cfg.get("max_stage_tokens", 1024),
+        )
+
+    if method_type == "more_think":
+        from mmalign.methods.specbench_ttd import MoreThinkMethod
+        return MoreThinkMethod(
+            rethink_count=cfg.get("rethink_count", 3),
+            temperature=cfg.get("temperature", 0.2),
+        )
+
+    if method_type == "best_of_n":
+        from mmalign.methods.specbench_ttd import BestOfNMethod
+        return BestOfNMethod(
+            n=cfg.get("n", 4),
+            temperature=cfg.get("temperature", 0.7),
+        )
+
+    if method_type == "tpo":
+        from mmalign.methods.specbench_ttd import TPOMethod
+        return TPOMethod(
+            iterations=cfg.get("iterations", 2),
+            sample_size=cfg.get("sample_size", 3),
+            temperature=cfg.get("temperature", 0.7),
+        )
+
+    if method_type == "ipr_prompt_refine":
+        from mmalign.methods.specbench_ttd import IPRPromptRefineMethod
+        return IPRPromptRefineMethod(
+            iterations=cfg.get("iterations", 3),
+            temperature=cfg.get("temperature", 0.2),
+        )
+
+    if method_type == "vlm_safety_guard":
+        from mmalign.methods.specbench_ttd import VLMSafetyGuardMethod
+        return VLMSafetyGuardMethod(temperature=cfg.get("temperature", 0.2))
+
+    if method_type == "overrefusal_check":
+        from mmalign.methods.specbench_ttd import OverRefusalCheckMethod
+        return OverRefusalCheckMethod(temperature=cfg.get("temperature", 0.2))
+
+    if method_type == "user_conditioned_safety_critic":
+        from mmalign.methods.specbench_ttd import UserConditionedSafetyCriticMethod
+        return UserConditionedSafetyCriticMethod(temperature=cfg.get("temperature", 0.2))
+
+    if method_type == "critic_revise_agent":
+        from mmalign.methods.specbench_ttd import CriticReviseAgentMethod
+        return CriticReviseAgentMethod(temperature=cfg.get("temperature", 0.2))
+
+    if method_type == "risk_adaptive_agent":
+        from mmalign.methods.specbench_ttd import RiskAdaptiveAgentMethod
+        return RiskAdaptiveAgentMethod(temperature=cfg.get("temperature", 0.2))
+
+    if method_type == "multi_agent_consensus":
+        from mmalign.methods.specbench_ttd import MultiAgentConsensusMethod
+        return MultiAgentConsensusMethod(temperature=cfg.get("temperature", 0.2))
+
     raise UnknownMethodError(
         f"Unknown method type '{method_type}' for '{method_id}'. "
-        "Supported: raw, vanilla, align3, self_refine "
+        "Supported: raw, vanilla, align3, self_refine, vanilla_specbench, "
+        "align3_specbench, zero_think, more_think, best_of_n, tpo, "
+        "ipr_prompt_refine, vlm_safety_guard, overrefusal_check, "
+        "user_conditioned_safety_critic, critic_revise_agent, "
+        "risk_adaptive_agent, multi_agent_consensus "
         "(plus plugins registered via core.registries.inference_align_registry)."
     )

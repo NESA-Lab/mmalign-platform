@@ -40,6 +40,34 @@ models:
       openai_compatible: true
 
   # ── OpenAI o4-mini (reasoning model) ─────────────────────────────────
+  gpt-4o:
+    provider: openai_compatible
+    model_name: gpt-4o
+    api_style: chat_completions
+    base_url: https://zjuapi.com/v1
+    api_key_env: OPENAI_COMPAT_GPT4O_API_KEY
+    timeout_s: 60
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: true
+
+  gpt-5.5:
+    provider: openai_compatible
+    model_name: gpt-5.5
+    api_style: chat_completions
+    base_url: https://zjuapi.com/v1
+    api_key_env: OPENAI_COMPAT_GPT55_API_KEY
+    timeout_s: 120
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: true
+
   o4-mini:
     provider: openai
     model_name: o4-mini

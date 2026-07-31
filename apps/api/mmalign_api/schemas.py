@@ -372,6 +372,7 @@ class ControllerGenerateRequest(BaseModel):
     method: str = "align3"
     benchmark_origin: Literal["builtin", "user"] | None = "builtin"
     debug: bool = False
+    raw_compare: bool = False
 
 
 class RiskAssessmentOut(BaseModel):

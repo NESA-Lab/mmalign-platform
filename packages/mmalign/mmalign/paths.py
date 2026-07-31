@@ -80,6 +80,11 @@ def _resolve_workspace(start: Path | None) -> Path:
     """*start* may be project root or ``data/`` workspace root."""
     if start is None:
         return workspace_dir()
+    env = os.environ.get("MMALIGN_DATA_DIR")
+    if env:
+        return Path(env).resolve()
+    if os.environ.get("MMALIGN_USE_XDG", "").lower() in ("1", "true", "yes"):
+        return xdg_workspace_dir()
     p = start.resolve()
     if p.name == "data":
         return p
@@ -87,7 +92,7 @@ def _resolve_workspace(start: Path | None) -> Path:
         return p / "data"
     if (p / "benchmarks").is_dir() and p.name == "data":
         return p
-    return workspace_dir(p)
+    return find_project_root(p) / "data"
 
 
 def builtin_benchmarks_dir(start: Path | None = None) -> Path:
