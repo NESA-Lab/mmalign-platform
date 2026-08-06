@@ -31,6 +31,10 @@ for pkg in "$EXAMPLES_BUILTIN"/*/; do
       cp "$pkg/$f" "$BUILTIN/$name/"
     fi
   done
+  if [[ -d "$pkg/assets" ]]; then
+    rm -rf "$BUILTIN/$name/assets"
+    cp -R "$pkg/assets" "$BUILTIN/$name/"
+  fi
 done
 
 echo "Done. Workspace: $WORKSPACE"

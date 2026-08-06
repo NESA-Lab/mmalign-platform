@@ -17,13 +17,15 @@ directory, maintaining full round-trip fidelity with SpecBench data.
 
 from __future__ import annotations
 
+import base64
 import json
+import mimetypes
 from pathlib import Path
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from .types import GenerationRequest, InputMessage, InputContentPart, ReviewVerdict
+from .types import GenerationRequest, InputContentPart, InputMessage, ReviewVerdict
 
 SpecCategory = Literal["safety", "behavioral"]
 
@@ -34,6 +36,7 @@ class Specification(BaseModel):
     ``spec_id`` is assigned automatically when loading from SpecBench
     (e.g. ``safety_0``, ``behavioral_2``).
     """
+
     spec_id: str
     text: str
     category: SpecCategory
@@ -46,6 +49,7 @@ class Scenario(BaseModel):
     ``source`` distinguishes native Chinese-value scenarios from SpecBench
     originals (``"specbench"``) or other external benchmarks.
     """
+
     id: str
     name: str
     description: str
@@ -82,14 +86,15 @@ class Scenario(BaseModel):
         }
 
     @classmethod
-    def from_specbench(cls, path: str | Path) -> "Scenario":
+    def from_specbench(cls, path: str | Path) -> Scenario:
         """Load a scenario from a SpecBench data directory.
 
         Expected directory layout::
 
             <path>/
               scenario.json        {"name": "...", "description": "..."}
-              specifications.json  {"safety_specifications": [...], "behavioral_specifications": [...]}
+              specifications.json  {"safety_specifications": [...],
+                                    "behavioral_specifications": [...]}
               prompts.json         [{...}, ...]   (used separately via Sample.from_specbench)
 
         The ``id`` is derived from the directory name.
@@ -133,6 +138,7 @@ class Scenario(BaseModel):
 
 class SpecLabel(BaseModel):
     """Per-specification verdict from a reviewer or evaluator."""
+
     spec_id: str
     verdict: ReviewVerdict
     confidence: float | None = None
@@ -151,6 +157,7 @@ class Sample(BaseModel):
     ``label`` is SpecBench's ``"safe"`` / ``"unsafe"`` classification.
     ``safety_warning`` is the VLM-scenario multimodal safety context string.
     """
+
     id: str
     request: GenerationRequest
     scenario_id: str
@@ -171,7 +178,7 @@ class Sample(BaseModel):
         sample_id: str | None = None,
         *,
         use_adversarial: bool = True,
-    ) -> "Sample":
+    ) -> Sample:
         """Construct a Sample from a single SpecBench prompts.json entry.
 
         By default uses the adversarial variant of the prompt when available,
@@ -181,13 +188,21 @@ class Sample(BaseModel):
         adversarial: str | None = entry.get("adversarial_prompt") or None
         effective_prompt = adversarial if (use_adversarial and adversarial) else raw_prompt
 
-        sid = sample_id or f"{scenario_id}_{hash(effective_prompt) & 0xFFFF:04x}"
+        sid = str(
+            entry.get("id") or sample_id or f"{scenario_id}_{hash(effective_prompt) & 0xFFFF:04x}"
+        )
+        content = [InputContentPart.text_part(effective_prompt)]
+        image_url = entry.get("image_url")
+        if image_url:
+            content.append(InputContentPart.image_url_part(str(image_url)))
         request = GenerationRequest(
             model=model,
-            input=[InputMessage(
-                role="user",
-                content=[InputContentPart.text_part(effective_prompt)],
-            )],
+            input=[
+                InputMessage(
+                    role="user",
+                    content=content,
+                )
+            ],
         )
         return cls(
             id=sid,
@@ -197,7 +212,14 @@ class Sample(BaseModel):
             adversarial_prompt=adversarial,
             answer=entry.get("answer") or None,
             safety_warning=entry.get("safety_warning") or None,
-            metadata={"source": entry.get("source", "")},
+            expected_specs=list(entry.get("expected_specs", [])),
+            metadata={
+                "source": entry.get("source", ""),
+                "modality": entry.get("modality", "image" if image_url else "text"),
+                "pair_id": entry.get("pair_id"),
+                "variant": entry.get("variant"),
+                **entry.get("metadata", {}),
+            },
         )
 
     @classmethod
@@ -209,20 +231,31 @@ class Sample(BaseModel):
         *,
         use_adversarial: bool = True,
         limit: int | None = None,
-    ) -> list["Sample"]:
+    ) -> list[Sample]:
         """Load all samples from a SpecBench prompts.json file."""
-        data: list[dict[str, Any]] = json.loads(
-            (Path(path) / "prompts.json").read_text(encoding="utf-8")
-        )
+        base = Path(path)
+        data: list[dict[str, Any]] = json.loads((base / "prompts.json").read_text(encoding="utf-8"))
         if limit is not None:
             data = data[:limit]
+        normalized: list[dict[str, Any]] = []
+        for entry in data:
+            item = dict(entry)
+            image_path = item.pop("image_path", None)
+            if image_path and not item.get("image_url"):
+                asset = (base / str(image_path)).resolve()
+                if not asset.is_relative_to(base.resolve()):
+                    raise ValueError(f"image_path escapes benchmark package: {image_path}")
+                mime = mimetypes.guess_type(asset.name)[0] or "application/octet-stream"
+                encoded = base64.b64encode(asset.read_bytes()).decode("ascii")
+                item["image_url"] = f"data:{mime};base64,{encoded}"
+            normalized.append(item)
         return [
             cls.from_specbench_entry(
                 entry,
                 scenario_id=scenario_id,
                 model=model,
-                sample_id=f"{scenario_id}_{i}",
+                sample_id=str(entry.get("id") or f"{scenario_id}_{i}"),
                 use_adversarial=use_adversarial,
             )
-            for i, entry in enumerate(data)
+            for i, entry in enumerate(normalized)
         ]

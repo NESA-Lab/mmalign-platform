@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#ebf8ff"/><rect y="270" width="640" height="90" fill="#c6f6d5"/>
+  <path d="M170 270V110h180v160M170 160h180" stroke="#3182ce" stroke-width="14" fill="none"/><path d="M350 170l120 100H350z" fill="#f6ad55"/>
+  <circle cx="130" cy="95" r="35" fill="#fbd38d"/><text x="205" y="55" font-family="sans-serif" font-size="25" fill="#2a4365">PUBLIC PLAYGROUND</text>
+</svg>

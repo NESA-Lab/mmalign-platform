@@ -264,11 +264,8 @@ multi_agent_consensus:
 
 ## Quick Verification
 
-From the repository root:
-
-```powershell
-cd C:\Users\OriginFlow\Desktop\mmalign-platform
-```
+Run the following commands from the repository root. Do not copy a
+machine-specific absolute path into documentation or scripts.
 
 Check that all methods can be loaded from config:
 

@@ -5,17 +5,13 @@ import tempfile
 from pathlib import Path
 
 import pytest
-from mmalign.core.scenario import Sample, Scenario, Specification, SpecCategory
-from mmalign.core.types import GenerationRequest
+
+from mmalign.core.scenario import Sample, Scenario, Specification
 
 # In-repo SpecBench-format package (examples/benchmarks/builtin/child).
 # packages/mmalign/tests/test_core → parents[4] = mmalign-platform root
 SPECBENCH_CHILD_PATH = (
-    Path(__file__).resolve().parents[4]
-    / "examples"
-    / "benchmarks"
-    / "builtin"
-    / "child"
+    Path(__file__).resolve().parents[4] / "examples" / "benchmarks" / "builtin" / "child"
 )
 
 
@@ -114,10 +110,12 @@ class TestScenarioFromSpecbench:
                 encoding="utf-8",
             )
             (base / "specifications.json").write_text(
-                json.dumps({
-                    "safety_specifications": ["No violence", "No hate speech"],
-                    "behavioral_specifications": ["Be concise"],
-                }),
+                json.dumps(
+                    {
+                        "safety_specifications": ["No violence", "No hate speech"],
+                        "behavioral_specifications": ["Be concise"],
+                    }
+                ),
                 encoding="utf-8",
             )
             (base / "prompts.json").write_text(json.dumps([]), encoding="utf-8")
@@ -159,13 +157,52 @@ class TestSample:
         msgs = sample.request.input_messages()
         assert msgs[0].content[0].text == "original"  # type: ignore[index]
 
+    def test_load_multimodal_sample_with_local_image(self, tmp_path: Path):
+        (tmp_path / "assets").mkdir()
+        (tmp_path / "assets" / "scene.svg").write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>',
+            encoding="utf-8",
+        )
+        (tmp_path / "prompts.json").write_text(
+            json.dumps(
+                [
+                    {
+                        "id": "visual_1",
+                        "prompt": "Describe the scene safely.",
+                        "image_path": "assets/scene.svg",
+                        "modality": "image",
+                        "label": "safe",
+                    }
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        sample = Sample.load_specbench_samples(tmp_path, scenario_id="visual")[0]
+        content = sample.request.input_messages()[0].content
+        assert not isinstance(content, str)
+        assert sample.id == "visual_1"
+        assert sample.metadata["modality"] == "image"
+        assert content[0].type == "input_text"
+        assert content[1].type == "input_image"
+        assert content[1].image_url is not None
+        assert content[1].image_url.startswith("data:image/svg+xml;base64,")
+
+    def test_local_image_cannot_escape_package(self, tmp_path: Path):
+        outside = tmp_path.parent / "outside.svg"
+        outside.write_text("<svg/>", encoding="utf-8")
+        (tmp_path / "prompts.json").write_text(
+            json.dumps([{"prompt": "x", "image_path": "../outside.svg"}]),
+            encoding="utf-8",
+        )
+        with pytest.raises(ValueError, match="escapes benchmark package"):
+            Sample.load_specbench_samples(tmp_path, scenario_id="visual")
+
     @pytest.mark.skipif(
         not SPECBENCH_CHILD_PATH.exists(),
         reason="SpecBench data not available",
     )
     def test_load_specbench_samples_limit(self):
-        samples = Sample.load_specbench_samples(
-            SPECBENCH_CHILD_PATH, scenario_id="child", limit=5
-        )
+        samples = Sample.load_specbench_samples(SPECBENCH_CHILD_PATH, scenario_id="child", limit=5)
         assert len(samples) == 5
         assert all(s.scenario_id == "child" for s in samples)

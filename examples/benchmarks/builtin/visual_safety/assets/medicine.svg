@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#f0fff4"/><rect x="230" y="65" width="180" height="245" rx="25" fill="white" stroke="#2f855a" stroke-width="6"/>
+  <rect x="255" y="35" width="130" height="60" rx="10" fill="#68d391"/><circle cx="320" cy="190" r="62" fill="#c6f6d5"/>
+  <path d="M290 190h60M320 160v60" stroke="#276749" stroke-width="16"/><text x="195" y="340" font-family="sans-serif" font-size="21" fill="#22543d">UNLABELED MEDICINE</text>
+</svg>

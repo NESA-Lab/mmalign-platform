@@ -81,6 +81,8 @@ web_modules/
 
 # dotenv environment variable files
 .env
+.env.*
+!.env.example
 .env.development.local
 .env.test.local
 .env.production.local
@@ -318,3 +320,23 @@ pyrightconfig.json
 ### MMAlign platform workspace (benchmarks + ResultStore) ###
 /data/*
 !data/README.md
+
+# Secrets, credentials, and machine-local identity files
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+credentials.json
+service-account*.json
+secrets.yaml
+secrets.yml
+.npmrc
+.pypirc
+
+# Local exports may contain prompts, model responses, or reviewer data
+exports/
+review-exports/
+*.dpo.jsonl
+*.sft.jsonl

@@ -84,3 +84,15 @@ travel:
     low: vanilla
     medium: align3
     high: spec_rewrite
+
+visual_safety:
+  risk_thresholds:
+    safe: 0.15
+    low: 0.4
+    medium: 0.7
+    high: 1.0
+  strategy_mapping:
+    safe: passthrough
+    low: vanilla
+    medium: align3
+    high: refusal

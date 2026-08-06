@@ -20,30 +20,32 @@ from __future__ import annotations
 import asyncio
 import traceback
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from mmalign.core.backend import ModelBackend
-from mmalign.core.evaluator import Evaluator
 from mmalign.core.method import AlignContext, InferenceAlignMethod
 from mmalign.core.result import (
     BackendTelemetry,
     BenchmarkRun,
-    RunSummary,
     SampleResult,
     compute_run_summary,
 )
 from mmalign.core.scenario import Sample, Scenario
 from mmalign.core.store import FileResultStore, ResultStore, new_run_id
-from mmalign.core.types import GenerationOutput, GenerationRequest, GenerationResult
-from mmalign.core.types import OutputContentPart
+from mmalign.core.types import (
+    GenerationOutput,
+    GenerationRequest,
+    GenerationResult,
+    OutputContentPart,
+)
 
 from .auto_eval import AutoEvaluator
 
 
 def _utcnow() -> datetime:
-    return datetime.now(tz=timezone.utc)
+    return datetime.now(tz=UTC)
 
 
 def _aligned_to_generation_result(
@@ -109,8 +111,8 @@ class DiagnosisEngine:
 
         try:
             # Step 1: Load scenario
-            from mmalign.loaders.scenarios import load_scenario
             from mmalign.loaders.benchmarks import BenchmarkOrigin
+            from mmalign.loaders.scenarios import load_scenario
 
             origin: BenchmarkOrigin | None
             if benchmark_origin == "builtin":
@@ -129,16 +131,19 @@ class DiagnosisEngine:
 
             # Step 2: Load backend
             from mmalign.backends.loader import load_backends
+
             backends = load_backends(self._configs / "models.yaml", only=[model])
             backend = backends[model]
 
             # Step 3: Load method
             from mmalign.loaders.methods import load_method
+
             align_method = load_method(method, self._configs / "methods.yaml")
             align_method.validate(loaded_scenario, backend)
 
             # Step 4: Load evaluator
             from mmalign.loaders.evaluators import load_evaluator
+
             eval_instance = load_evaluator(
                 evaluator,
                 self._configs / "evaluators.yaml",
@@ -174,19 +179,23 @@ class DiagnosisEngine:
 
             # Step 8: Compute summary
             summary = compute_run_summary(sample_results)
-            run = run.model_copy(update={
-                "status": "completed",
-                "summary": summary,
-                "completed_at": _utcnow(),
-            })
+            run = run.model_copy(
+                update={
+                    "status": "completed",
+                    "summary": summary,
+                    "completed_at": _utcnow(),
+                }
+            )
             store.save_run(run)
 
         except Exception as exc:
-            run = run.model_copy(update={
-                "status": "failed",
-                "completed_at": _utcnow(),
-                "metadata": {**run.metadata, "error": traceback.format_exc()},
-            })
+            run = run.model_copy(
+                update={
+                    "status": "failed",
+                    "completed_at": _utcnow(),
+                    "metadata": {**run.metadata, "error": traceback.format_exc()},
+                }
+            )
             store.save_run(run)
             if isinstance(exc, (KeyboardInterrupt, SystemExit)):
                 raise
@@ -216,9 +225,7 @@ class DiagnosisEngine:
                     update={"metadata": {**sample.request.metadata, "sample_id": sample.id}}
                 )
 
-                aligned = await align_method.align(
-                    request, backend, scenario, context=context
-                )
+                aligned = await align_method.align(request, backend, scenario, context=context)
                 gen_result = _aligned_to_generation_result(
                     aligned.output,
                     request,
@@ -252,7 +259,11 @@ class DiagnosisEngine:
                     eval_result=eval_result,
                     status="failed" if error_code else "completed",
                     telemetry=telemetry,
-                    metadata={"thought": aligned.thought, **aligned.metadata},
+                    metadata={
+                        **sample.metadata,
+                        "thought": aligned.thought,
+                        **aligned.metadata,
+                    },
                 )
             except Exception as exc:
                 sr = SampleResult(

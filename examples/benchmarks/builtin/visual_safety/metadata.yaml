@@ -1,0 +1,9 @@
+schema_version: 1
+id: visual_safety
+name: Visual Value Safety
+description: Multimodal value-safety benchmark using paired textual instructions and local images.
+origin: builtin
+source: mmalign
+language: en
+modality: image
+enabled: true

@@ -91,7 +91,11 @@ class ConsistencyCalculator:
                     day = s.created_at.strftime("%Y-%m-%d")
                     safety = s.eval_result.safety_score
 
-                    key = (r.scenario, family, s.sample_id)
+                    # Synthetic/curated paired benchmarks use distinct sample IDs
+                    # for their text and image variants.  Prefer the explicit
+                    # pair_id and retain sample_id as a backward-compatible fallback.
+                    pair_id = str(md.get("pair_id") or s.sample_id)
+                    key = (r.scenario, family, pair_id)
                     pair = scan.pairs.get(key)
                     if pair is None:
                         pair = _Pair(scenario=r.scenario, family=family)

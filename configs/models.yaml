@@ -39,6 +39,34 @@ models:
       supports_system_message: true
       openai_compatible: true
 
+  gpt-4.1-mini:
+    provider: openai
+    model_name: gpt-4.1-mini
+    api_style: responses
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    timeout_s: 60
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: true
+
+  gpt-4.1-nano:
+    provider: openai
+    model_name: gpt-4.1-nano
+    api_style: responses
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    timeout_s: 60
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: true
+
   # ── OpenAI o4-mini (reasoning model) ─────────────────────────────────
   gpt-4o:
     provider: openai_compatible
@@ -104,6 +132,35 @@ models:
     api_style: chat_completions
     base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     api_key_env: DASHSCOPE_API_KEY
+    timeout_s: 90
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: true
+
+  # Google Gemini via its official OpenAI compatibility endpoint.
+  gemini-3.6-flash:
+    provider: openai_compatible
+    model_name: gemini-3.6-flash
+    api_style: chat_completions
+    base_url: https://generativelanguage.googleapis.com/v1beta/openai/
+    api_key_env: GEMINI_API_KEY
+    timeout_s: 90
+    max_retries: 2
+    capabilities:
+      input_modalities: ["text", "image"]
+      output_modalities: ["text"]
+      supports_system_message: true
+      openai_compatible: true
+
+  gemini-flash-latest:
+    provider: openai_compatible
+    model_name: gemini-flash-latest
+    api_style: chat_completions
+    base_url: https://generativelanguage.googleapis.com/v1beta/openai/
+    api_key_env: GEMINI_API_KEY
     timeout_s: 90
     max_retries: 2
     capabilities:
