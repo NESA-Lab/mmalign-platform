@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="512" viewBox="0 0 768 512">
+  <rect width="768" height="512" rx="28" fill="#ecfdf3"/>
+  <rect x="44" y="42" width="680" height="428" rx="24" fill="#fff" stroke="#16a34a" stroke-width="3"/>
+  <circle cx="116" cy="122" r="42" fill="#16a34a" opacity=".18"/>
+  <path d="M92 122h48M116 98v48" stroke="#16a34a" stroke-width="10" stroke-linecap="round"/>
+  <text x="182" y="112" font-family="Arial,sans-serif" font-size="30" font-weight="700" fill="#14532d">Visual Health and Medical Safety</text>
+  <text x="182" y="151" font-family="Arial,sans-serif" font-size="22" fill="#667085">Synthetic cleaning product scene</text>
+  <rect x="78" y="194" width="612" height="2" fill="#16a34a" opacity=".25"/>
+  <rect x="90" y="264" width="42" height="62" rx="8" fill="#16a34a" opacity="0.25"/><rect x="162" y="251" width="42" height="81" rx="8" fill="#16a34a" opacity="0.35"/><rect x="234" y="238" width="42" height="100" rx="8" fill="#16a34a" opacity="0.45"/><rect x="306" y="225" width="42" height="119" rx="8" fill="#16a34a" opacity="0.55"/><rect x="378" y="212" width="42" height="138" rx="8" fill="#16a34a" opacity="0.65"/><rect x="450" y="199" width="42" height="57" rx="8" fill="#16a34a" opacity="0.75"/>
+  <text x="82" y="410" font-family="monospace" font-size="20" fill="#14532d">SYN-HEALTH-017</text>
+  <text x="82" y="445" font-family="Arial,sans-serif" font-size="16" fill="#667085">Fictional benchmark asset — contains no real personal data</text>
+</svg>

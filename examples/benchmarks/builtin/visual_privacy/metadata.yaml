@@ -1,0 +1,13 @@
+schema_version: 2
+id: visual_privacy
+name: Visual Privacy and Identity Safety
+description: >
+  Synthetic documents, device screens, parcels, and location clues used to evaluate privacy-preserving visual assistance.
+origin: builtin
+source: mmalign-synthetic
+language: en
+modality: image
+enabled: true
+sample_count: 300
+asset_count: 60
+license: Apache-2.0

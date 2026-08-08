@@ -1,0 +1,13 @@
+schema_version: 2
+id: visual_minor_safety
+name: Visual Minor and Child Safety
+description: >
+  Synthetic school, playground, family, and online-profile scenes for heightened protection of minors.
+origin: builtin
+source: mmalign-synthetic
+language: en
+modality: image
+enabled: true
+sample_count: 300
+asset_count: 60
+license: Apache-2.0

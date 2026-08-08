@@ -1,0 +1,13 @@
+schema_version: 2
+id: visual_health
+name: Visual Health and Medical Safety
+description: >
+  Synthetic medicine, symptom, report, and household hazard scenes for calibrated medical visual assistance.
+origin: builtin
+source: mmalign-synthetic
+language: en
+modality: image
+enabled: true
+sample_count: 300
+asset_count: 60
+license: Apache-2.0

@@ -107,7 +107,11 @@ def find_package(
     origin: BenchmarkOrigin | None = None,
     workspace_start: Path | None = None,
 ) -> BenchmarkPackage:
-    matches = [p for p in discover_packages(origin=origin, workspace_start=workspace_start) if p.id == benchmark_id]
+    matches = [
+        p
+        for p in discover_packages(origin=origin, workspace_start=workspace_start)
+        if p.id == benchmark_id
+    ]
     if not matches:
         available = [(p.origin, p.id) for p in discover_packages(workspace_start=workspace_start)]
         raise BenchmarkNotFoundError(
@@ -128,22 +132,28 @@ def package_to_scenario(pkg: BenchmarkPackage) -> Scenario:
 
     specs_path = pkg.root / "specifications.json"
     specs_json: dict[str, Any] = json.loads(specs_path.read_text(encoding="utf-8"))
-    safety_specs = [
-        Specification(
-            spec_id=f"safety_{i}",
-            text=text,
-            category="safety",
-        )
-        for i, text in enumerate(specs_json.get("safety_specifications", []))
-    ]
-    behavioral_specs = [
-        Specification(
-            spec_id=f"behavioral_{i}",
-            text=text,
-            category="behavioral",
-        )
-        for i, text in enumerate(specs_json.get("behavioral_specifications", []))
-    ]
+    def parse_specs(
+        entries: list[Any], category: Literal["safety", "behavioral"]
+    ) -> list[Specification]:
+        result: list[Specification] = []
+        for i, entry in enumerate(entries):
+            if isinstance(entry, dict):
+                result.append(Specification(
+                    spec_id=str(entry.get("id") or f"{category}_{i}"),
+                    text=str(entry.get("text", "")),
+                    category=category,
+                    tags=[str(tag) for tag in entry.get("tags", [])],
+                ))
+            else:
+                result.append(Specification(
+                    spec_id=f"{category}_{i}", text=str(entry), category=category
+                ))
+        return result
+
+    safety_specs = parse_specs(specs_json.get("safety_specifications", []), "safety")
+    behavioral_specs = parse_specs(
+        specs_json.get("behavioral_specifications", []), "behavioral"
+    )
     modality = pkg.meta.get("modality", "text")
     return Scenario(
         id=pkg.id,
@@ -225,10 +235,25 @@ def load_specs_from_package(pkg: BenchmarkPackage) -> list[dict[str, Any]]:
             (pkg.root / "specifications.json").read_text(encoding="utf-8")
         )
         result: list[dict[str, Any]] = []
-        for i, text in enumerate(specs_json.get("safety_specifications", [])):
-            result.append({"spec_id": f"safety_{i}", "category": "safety", "text": text, "tags": []})
-        for i, text in enumerate(specs_json.get("behavioral_specifications", [])):
-            result.append({"spec_id": f"behavioral_{i}", "category": "behavioral", "text": text, "tags": []})
+        for category, key in (
+            ("safety", "safety_specifications"),
+            ("behavioral", "behavioral_specifications"),
+        ):
+            for i, entry in enumerate(specs_json.get(key, [])):
+                if isinstance(entry, dict):
+                    result.append({
+                        "spec_id": str(entry.get("id") or f"{category}_{i}"),
+                        "category": category,
+                        "text": str(entry.get("text", "")),
+                        "tags": [str(tag) for tag in entry.get("tags", [])],
+                    })
+                else:
+                    result.append({
+                        "spec_id": f"{category}_{i}",
+                        "category": category,
+                        "text": str(entry),
+                        "tags": [],
+                    })
         return result
     except Exception:
         return []

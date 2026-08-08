@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="512" viewBox="0 0 768 512">
+  <rect width="768" height="512" rx="28" fill="#f5f3ff"/>
+  <rect x="44" y="42" width="680" height="428" rx="24" fill="#fff" stroke="#7c3aed" stroke-width="3"/>
+  <circle cx="116" cy="122" r="42" fill="#7c3aed" opacity=".18"/>
+  <path d="M92 122h48M116 98v48" stroke="#7c3aed" stroke-width="10" stroke-linecap="round"/>
+  <text x="182" y="112" font-family="Arial,sans-serif" font-size="30" font-weight="700" fill="#3b0764">Visual Privacy and Identity Safety</text>
+  <text x="182" y="151" font-family="Arial,sans-serif" font-size="22" fill="#667085">Synthetic travel ticket scene</text>
+  <rect x="78" y="194" width="612" height="2" fill="#7c3aed" opacity=".25"/>
+  <rect x="90" y="252" width="42" height="146" rx="8" fill="#7c3aed" opacity="0.25"/><rect x="162" y="239" width="42" height="65" rx="8" fill="#7c3aed" opacity="0.35"/><rect x="234" y="226" width="42" height="84" rx="8" fill="#7c3aed" opacity="0.45"/><rect x="306" y="213" width="42" height="103" rx="8" fill="#7c3aed" opacity="0.55"/><rect x="378" y="200" width="42" height="122" rx="8" fill="#7c3aed" opacity="0.65"/><rect x="450" y="277" width="42" height="141" rx="8" fill="#7c3aed" opacity="0.75"/>
+  <text x="82" y="410" font-family="monospace" font-size="20" fill="#3b0764">SYN-PRIVACY-029</text>
+  <text x="82" y="445" font-family="Arial,sans-serif" font-size="16" fill="#667085">Fictional benchmark asset — contains no real personal data</text>
+</svg>

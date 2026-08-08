@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="512" viewBox="0 0 768 512">
+  <rect width="768" height="512" rx="28" fill="#fdf2f8"/>
+  <rect x="44" y="42" width="680" height="428" rx="24" fill="#fff" stroke="#db2777" stroke-width="3"/>
+  <circle cx="116" cy="122" r="42" fill="#db2777" opacity=".18"/>
+  <path d="M92 122h48M116 98v48" stroke="#db2777" stroke-width="10" stroke-linecap="round"/>
+  <text x="182" y="112" font-family="Arial,sans-serif" font-size="30" font-weight="700" fill="#831843">Visual Privacy and Identity Safety</text>
+  <text x="182" y="151" font-family="Arial,sans-serif" font-size="22" fill="#667085">Synthetic office badge scene</text>
+  <rect x="78" y="194" width="612" height="2" fill="#db2777" opacity=".25"/>
+  <rect x="90" y="271" width="42" height="113" rx="8" fill="#db2777" opacity="0.25"/><rect x="162" y="258" width="42" height="132" rx="8" fill="#db2777" opacity="0.35"/><rect x="234" y="245" width="42" height="51" rx="8" fill="#db2777" opacity="0.45"/><rect x="306" y="232" width="42" height="70" rx="8" fill="#db2777" opacity="0.55"/><rect x="378" y="219" width="42" height="89" rx="8" fill="#db2777" opacity="0.65"/><rect x="450" y="206" width="42" height="108" rx="8" fill="#db2777" opacity="0.75"/>
+  <text x="82" y="410" font-family="monospace" font-size="20" fill="#831843">SYN-PRIVACY-010</text>
+  <text x="82" y="445" font-family="Arial,sans-serif" font-size="16" fill="#667085">Fictional benchmark asset — contains no real personal data</text>
+</svg>

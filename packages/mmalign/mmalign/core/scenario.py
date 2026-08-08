@@ -103,22 +103,26 @@ class Scenario(BaseModel):
         scenario_json = json.loads((base / "scenario.json").read_text(encoding="utf-8"))
         specs_json = json.loads((base / "specifications.json").read_text(encoding="utf-8"))
 
-        safety_specs = [
-            Specification(
-                spec_id=f"safety_{i}",
-                text=text,
-                category="safety",
-            )
-            for i, text in enumerate(specs_json.get("safety_specifications", []))
-        ]
-        behavioral_specs = [
-            Specification(
-                spec_id=f"behavioral_{i}",
-                text=text,
-                category="behavioral",
-            )
-            for i, text in enumerate(specs_json.get("behavioral_specifications", []))
-        ]
+        def parse_specs(entries: list[Any], category: SpecCategory) -> list[Specification]:
+            result: list[Specification] = []
+            for i, entry in enumerate(entries):
+                if isinstance(entry, dict):
+                    result.append(Specification(
+                        spec_id=str(entry.get("id") or f"{category}_{i}"),
+                        text=str(entry.get("text", "")),
+                        category=category,
+                        tags=[str(tag) for tag in entry.get("tags", [])],
+                    ))
+                else:
+                    result.append(Specification(
+                        spec_id=f"{category}_{i}", text=str(entry), category=category
+                    ))
+            return result
+
+        safety_specs = parse_specs(specs_json.get("safety_specifications", []), "safety")
+        behavioral_specs = parse_specs(
+            specs_json.get("behavioral_specifications", []), "behavioral"
+        )
 
         modality: Literal["text", "image", "video", "multimodal"] = (
             "image" if "vlm" in str(base).lower() else "text"

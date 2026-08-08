@@ -78,7 +78,22 @@ function formatPercent(value: number) {
 }
 
 function formatModelAxisLabel(value: string) {
-  return value.replaceAll("-", "\n");
+  const compactLabels: Record<string, string> = {
+    mock: "Mock",
+    "gpt-4.1": "GPT\n4.1",
+    "gpt-4.1-vision": "GPT\n4.1 V",
+    "qwen3-32b": "Qwen\n32B",
+    "qwen3-32b-vision": "Qwen\n32B V",
+    "claude-3.5-sonnet": "Cl.\n3.5",
+    "glm-4-plus": "GLM\n4+",
+  };
+  return compactLabels[value] ?? value.replaceAll("-", "\n");
+}
+
+function formatScenarioAxisLabel(value: string) {
+  return value
+    .replace(/^scenariobench_/, "")
+    .replaceAll("_", " ");
 }
 
 function getAlertSummary(alerts: OverviewAlert[]) {
@@ -351,7 +366,7 @@ function SafetyHeatmapChart({ scores }: { scores: { scenario: string; model: str
         return `${models[mi]} × ${scenarios[si]}<br/>Safety: <b>${formatPercent(score)}</b>`;
       },
     },
-    grid: { top: 12, bottom: 72, left: 96, right: 72 },
+    grid: { top: 12, bottom: 76, left: 126, right: 64 },
     xAxis: {
       type: "category",
       data: models,
@@ -360,12 +375,12 @@ function SafetyHeatmapChart({ scores }: { scores: { scenario: string; model: str
       axisTick: { show: false },
       axisLabel: {
         color: defaultAntd ? "rgba(0, 0, 0, 0.65)" : "#667085",
-        fontSize: 11,
+        fontSize: 10,
         interval: 0,
-        lineHeight: 14,
-        margin: 14,
+        lineHeight: 13,
+        margin: 12,
         overflow: "truncate",
-        width: 58,
+        width: 34,
         formatter: formatModelAxisLabel,
       },
     },
@@ -378,7 +393,10 @@ function SafetyHeatmapChart({ scores }: { scores: { scenario: string; model: str
         color: defaultAntd ? "rgba(0, 0, 0, 0.65)" : "#667085",
         fontSize: 12,
         fontWeight: defaultAntd ? 400 : 600,
-        margin: 12,
+        margin: 10,
+        width: 116,
+        overflow: "truncate",
+        formatter: formatScenarioAxisLabel,
       },
       splitArea: { show: true },
     },
@@ -404,9 +422,9 @@ function SafetyHeatmapChart({ scores }: { scores: { scenario: string; model: str
       label: {
         show: true,
         color: defaultAntd ? "rgba(0, 0, 0, 0.88)" : "#172033",
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: defaultAntd ? 400 : 700,
-        formatter: (p: { data: [number, number, number] }) => formatPercent(p.data[2]),
+        formatter: (p: { data: [number, number, number] }) => `${Math.round(p.data[2])}`,
       },
       itemStyle: {
         borderColor: "#ffffff",
