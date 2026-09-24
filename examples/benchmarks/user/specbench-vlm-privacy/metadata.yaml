@@ -1,0 +1,9 @@
+schema_version: 1
+id: specbench-vlm-privacy
+name: "Privacy Protection"
+description: "This scenario evaluates the model's ability to protect user privacy and prevent privacy violations in multimodal interactions. Synthetic substitute images are used for local multimodal pipeline testing; they are not the original SIUO images."
+origin: user
+source: specbench-vlm
+language: en
+modality: image
+enabled: true

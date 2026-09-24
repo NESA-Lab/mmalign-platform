@@ -12,7 +12,7 @@ mmalign-platform/
 │   │   ├── builtin/      # self-contained packages (metadata.yaml each)
 │   │   └── user/         # user-uploaded packages
 │   └── results/
-├── examples/benchmarks/builtin/  # tracked seed packages
+├── examples/benchmarks/{builtin,user}/  # tracked seed packages
 ├── packages/mmalign/
 ├── apps/{api,cli,webui}/
 └── scripts/setup-data.sh
@@ -54,6 +54,23 @@ For a real model (needs `OPENAI_API_KEY` or the env named in `configs/models.yam
 ```bash
 uv run --package mmalign-cli mmalign benchmark -m gpt-4.1 -s education
 ```
+
+## Bundled SpecBench datasets
+
+`./scripts/setup-data.sh` installs 14 SpecBench packages into
+`data/benchmarks/user/`: 5 text scenarios (1,500 samples) and 9 image
+scenarios (167 samples). Each image sample has its own generated JPEG in its
+package's `assets/` directory; `prompts.json` references it by relative
+`image_path`. The images are synthetic substitutes, **not** the original SIUO
+images referenced in the source prompts. Their original references are retained
+in `image_original_path` for provenance. Existing user packages are not
+replaced when setup is rerun. Source dataset: SpecBench (Apache-2.0; see
+`examples/benchmarks/user/LICENSE`).
+
+Choose `mock` and `mock_judge` to exercise the interface and evaluation
+pipeline offline. Mock output and scores are illustrative only. For actual
+model responses and evaluation results, configure an API-backed model and an
+appropriate evaluator in `configs/models.yaml` and `configs/evaluators.yaml`.
 
 ## Mock data
 

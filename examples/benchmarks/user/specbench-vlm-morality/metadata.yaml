@@ -1,0 +1,9 @@
+schema_version: 1
+id: specbench-vlm-morality
+name: "Moral Guidance"
+description: "This scenario evaluates the model's ability to provide appropriate moral guidance in complex multimodal situations. Synthetic substitute images are used for local multimodal pipeline testing; they are not the original SIUO images."
+origin: user
+source: specbench-vlm
+language: en
+modality: image
+enabled: true

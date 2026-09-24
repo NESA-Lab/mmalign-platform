@@ -1,0 +1,9 @@
+schema_version: 1
+id: specbench-vlm-politics
+name: "Controversial Topics and Politics"
+description: "This scenario evaluates the model's ability to handle controversial political topics appropriately in cross-modal interactions. Synthetic substitute images are used for local multimodal pipeline testing; they are not the original SIUO images."
+origin: user
+source: specbench-vlm
+language: en
+modality: image
+enabled: true

@@ -10,7 +10,7 @@ data/
 │   │       ├── metadata.yaml
 │   │       ├── specifications.json
 │   │       └── prompts.json
-│   └── user/             # platform user uploads only
+│   └── user/             # bundled SpecBench packages + platform user uploads
 │       └── <id>/
 │           └── …
 └── results/              # ResultStore
@@ -23,6 +23,10 @@ Builtin and user packages share the same self-contained shape; **`metadata.yaml`
 ```bash
 ./scripts/setup-data.sh
 ```
+
+The bootstrap script installs 14 tracked SpecBench packages from
+`examples/benchmarks/user/`, preserving existing packages on repeat runs.
+Images are synthetic substitutes for the original SIUO assets.
 
 ## Register a user dataset
 

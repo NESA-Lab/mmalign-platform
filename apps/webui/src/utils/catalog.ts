@@ -21,18 +21,18 @@ export function defaultEvaluatorId(evaluators: EvaluatorOut[]): string {
 }
 
 export function evaluatorOptions(evaluators: EvaluatorOut[]) {
-  return evaluators
-    .filter((e) => e.id !== "mock_judge")
-    .map((e) => ({
-      value: e.id,
-      label: e.requires_api_key ? `${e.id}（需 API Key）` : e.id,
-    }));
+  return evaluators.map((e) => ({
+    value: e.id,
+    label: e.id === "mock_judge"
+      ? `${e.id}（仅测试）`
+      : e.requires_api_key
+        ? `${e.id}（需 API Key）`
+        : e.id,
+  }));
 }
 
 export function modelSelectOptions(models: ModelOut[]) {
-  const preferred = productionModels(models);
-  const list = preferred.length > 0 ? preferred : models;
-  return list.map((m) => ({
+  return models.map((m) => ({
     value: m.id,
     label: m.provider === "mock" ? `${m.id}（仅测试）` : m.id,
   }));

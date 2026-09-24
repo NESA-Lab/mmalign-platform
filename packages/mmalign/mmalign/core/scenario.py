@@ -20,6 +20,7 @@ from __future__ import annotations
 import base64
 import json
 import mimetypes
+import re
 from pathlib import Path
 from typing import Any, Literal
 
@@ -195,8 +196,12 @@ class Sample(BaseModel):
         sid = str(
             entry.get("id") or sample_id or f"{scenario_id}_{hash(effective_prompt) & 0xFFFF:04x}"
         )
-        content = [InputContentPart.text_part(effective_prompt)]
         image_url = entry.get("image_url")
+        # Imported SpecBench VLM prompts mention the upstream SIUO image location;
+        # the actual image is supplied as a separate content part below.
+        if image_url:
+            effective_prompt = re.sub(r"^\[Image: [^\n]+\]\s*", "", effective_prompt)
+        content = [InputContentPart.text_part(effective_prompt)]
         if image_url:
             content.append(InputContentPart.image_url_part(str(image_url)))
         request = GenerationRequest(
@@ -222,6 +227,8 @@ class Sample(BaseModel):
                 "modality": entry.get("modality", "image" if image_url else "text"),
                 "pair_id": entry.get("pair_id"),
                 "variant": entry.get("variant"),
+                **({"image_source": entry["image_source"]} if "image_source" in entry else {}),
+                **({"image_original_path": entry["image_original_path"]} if "image_original_path" in entry else {}),
                 **entry.get("metadata", {}),
             },
         )

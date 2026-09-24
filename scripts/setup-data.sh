@@ -7,6 +7,7 @@ WORKSPACE="$ROOT/data"
 BUILTIN="$WORKSPACE/benchmarks/builtin"
 USER="$WORKSPACE/benchmarks/user"
 EXAMPLES_BUILTIN="$ROOT/examples/benchmarks/builtin"
+EXAMPLES_USER="$ROOT/examples/benchmarks/user"
 
 mkdir -p "$BUILTIN" "$USER" "$WORKSPACE/results"/{runs,samples,reviews}
 if [[ ! -f "$WORKSPACE/results/index.json" ]]; then
@@ -37,6 +38,18 @@ for pkg in "$EXAMPLES_BUILTIN"/*/; do
   fi
 done
 
+# Seed bundled user benchmarks without replacing packages uploaded or edited locally.
+if [[ -d "$EXAMPLES_USER" ]]; then
+  for pkg in "$EXAMPLES_USER"/*/; do
+    name="$(basename "$pkg")"
+    if [[ ! -f "$pkg/metadata.yaml" || -e "$USER/$name" ]]; then
+      continue
+    fi
+    echo "Installing user/$name …"
+    cp -R "$pkg" "$USER/$name"
+  done
+fi
+
 echo "Done. Workspace: $WORKSPACE"
 echo "  builtin: $BUILTIN"
-echo "  user:    $USER (empty until uploads)"
+echo "  user:    $USER"

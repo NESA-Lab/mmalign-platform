@@ -1,0 +1,9 @@
+schema_version: 1
+id: specbench-vlm-danger
+name: "Dangerous Behavior Prevention"
+description: "This scenario evaluates the model's ability to prevent and discourage dangerous behaviors across different modalities. Synthetic substitute images are used for local multimodal pipeline testing; they are not the original SIUO images."
+origin: user
+source: specbench-vlm
+language: en
+modality: image
+enabled: true
