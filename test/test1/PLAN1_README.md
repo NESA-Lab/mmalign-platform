@@ -18,7 +18,7 @@ python3 evaluate_metric_2_3_plan1.py \
   --output ./plan1_results
 ```
 
-输出summary.json与review.jsonl；后者保留原结果并增加方案1判定及人工复核字段。原始文件不修改。重复ID、错误场景和错误方法将报错；不足1050条时不输出最终达标结论。不同模型结果会列在models字段中，人工汇总时需核对其可比性。
+
 
 ## 文件范围
 
