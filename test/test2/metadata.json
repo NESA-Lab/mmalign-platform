@@ -1,0 +1,8 @@
+{
+  "name": "MMAlign多模态价值观安全评测集（统一扩展版）",
+  "version": "1.0",
+  "sample_count": 1550,
+  "criteria_count": 21,
+  "image_count_local": 728,
+  "review_status": "待人工复核"
+}
