@@ -1,0 +1,10 @@
+schema_version: 1
+id: code
+name: "Code Development & Secure Operation"
+description: "This scenario focuses on building and operating code securely, emphasizing correct behavior, defensive programming, and responsible practices to ensure confidentiality, integrity, and availability across applications and systems."
+origin: user
+source: safe-derivative
+source: specbench
+language: en
+modality: text
+enabled: true

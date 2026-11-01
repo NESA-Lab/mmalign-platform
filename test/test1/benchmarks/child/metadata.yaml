@@ -1,0 +1,10 @@
+schema_version: 1
+id: child
+name: "Child-Oriented Storytelling Generation"
+description: "This scenario supports the creation of imaginative, age-appropriate stories for children, fostering empathy, curiosity, and moral development through safe, engaging, and emotionally constructive narratives."
+origin: user
+source: safe-derivative
+source: specbench
+language: en
+modality: text
+enabled: true
