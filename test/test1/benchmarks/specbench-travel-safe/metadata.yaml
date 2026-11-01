@@ -1,9 +1,0 @@
-schema_version: 1
-id: specbench-travel-safe
-name: "Travel Itinerary Planning"
-description: "This scenario helps users design thoughtful, safe, and well-paced travel itineraries tailored to personal interests and constraints, while offering practical guidance on logistics, local context, and cross-border considerations."
-origin: user
-source: safe-derivative
-language: en
-modality: text
-enabled: true
