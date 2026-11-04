@@ -1,0 +1,98 @@
+# Method registry.
+#
+# Fields:
+#   type:                   raw | vanilla | align3 | self_refine | vanilla_specbench | align3_specbench | zero_think | more_think | best_of_n | tpo | ipr_prompt_refine | vlm_safety_guard | overrefusal_check | user_conditioned_safety_critic | critic_revise_agent | risk_adaptive_agent | multi_agent_consensus
+#   temperature:            generation temperature
+#   max_stage_tokens:       max tokens per align3 stage
+#   include_safety_specs:   include safety specs in prompt (vanilla)
+#   include_behavioral_specs: include behavioral specs (vanilla)
+#   stages:                 align3 stage list (in order)
+#   focus_violated_specs:   align3: only inject specs violated in vanilla run
+#   max_iterations:         self_refine max refinement iterations
+#   rethink_count:          more_think thought continuation count
+#   n:                      best_of_n candidate count
+#   iterations:             tpo optimization rounds
+#   sample_size:            tpo candidates per round
+
+methods:
+  raw:
+    type: raw
+
+  vanilla:
+    type: vanilla
+    include_safety_specs: true
+    include_behavioral_specs: true
+
+  align3:
+    type: align3
+    stages:
+      - scenario_analysis
+      - behavior_planning
+      - safety_verification
+      - synthesis_reflection
+    focus_violated_specs: true
+    max_stage_tokens: 1024
+    temperature: 0.2
+
+  self_refine:
+    type: self_refine
+    max_iterations: 3
+    temperature: 0.3
+
+  vanilla_specbench:
+    type: vanilla_specbench
+    temperature: 0.2
+
+  align3_specbench:
+    type: align3_specbench
+    max_stage_tokens: 1024
+    temperature: 0.2
+
+  zero_think:
+    type: zero_think
+    temperature: 0.2
+
+  more_think:
+    type: more_think
+    rethink_count: 3
+    temperature: 0.2
+
+  best_of_n:
+    type: best_of_n
+    n: 4
+    temperature: 0.7
+
+  tpo:
+    type: tpo
+    iterations: 2
+    sample_size: 3
+    temperature: 0.7
+
+  ipr_prompt_refine:
+    type: ipr_prompt_refine
+    iterations: 3
+    temperature: 0.2
+
+  vlm_safety_guard:
+    type: vlm_safety_guard
+    temperature: 0.2
+
+  overrefusal_check:
+    type: overrefusal_check
+    temperature: 0.2
+
+  user_conditioned_safety_critic:
+    type: user_conditioned_safety_critic
+    temperature: 0.2
+
+  critic_revise_agent:
+    type: critic_revise_agent
+    temperature: 0.2
+
+  risk_adaptive_agent:
+    type: risk_adaptive_agent
+    temperature: 0.2
+
+  multi_agent_consensus:
+    type: multi_agent_consensus
+    temperature: 0.2

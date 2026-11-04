@@ -1,0 +1,32 @@
+# Merge these entries into models.yaml when the matching service is available.
+# Local weights: internlm/Intern-S2-Preview
+# Frozen revision: 4f57cab513689b089019fce4ad24e26520df183c
+models:
+  intern-s2-preview-35b-local:
+    provider: intern
+    thinking_style: chat_template
+    model_name: internlm/Intern-S2-Preview
+    api_style: chat_completions
+    base_url: http://127.0.0.1:8104/v1
+    api_key_env: INTERN_LOCAL_API_KEY
+    timeout_s: 600
+    max_retries: 1
+    capabilities:
+      input_modalities: [text, image]
+      output_modalities: [text]
+      supports_system_message: true
+      openai_compatible: true
+  intern-s2-preview-35b-api:
+    provider: intern
+    thinking_style: official
+    model_name: intern-s2-preview-35b
+    api_style: chat_completions
+    base_url: https://chat.intern-ai.org.cn/api/v1
+    api_key_env: INTERN_API_KEY
+    timeout_s: 600
+    max_retries: 1
+    capabilities:
+      input_modalities: [text, image]
+      output_modalities: [text]
+      supports_system_message: true
+      openai_compatible: true
