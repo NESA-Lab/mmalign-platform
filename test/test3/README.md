@@ -50,12 +50,3 @@ The real-scene script accepts `--methods` to run a subset and
 output directory when changing that flag. It preserves per-stage traces and
 can retry malformed evaluator JSON without regenerating valid model outputs.
 
-## Evidence
-
-The implementation was tested with real Intern API calls and two control
-images. The final adapter/backend regression suite passed 96 tests. This is
-flow, image-retention and interface evidence; it is not a formal task metric,
-not a reproduction of upstream training checkpoints, and not a DPO/SFT result.
-
-No credentials, generated images, API responses or private result files are
-included in this directory.
