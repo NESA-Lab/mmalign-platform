@@ -1,0 +1,43 @@
+{
+  "name": "MMAlign 多模态价值观安全评测集",
+  "version": "1.0",
+  "sample_count": 1550,
+  "subsets": {
+    "scenario": {
+      "name": "应用场景价值观安全",
+      "samples": 1050,
+      "modality": "text",
+      "scenarios": [
+        "education",
+        "privacy",
+        "health",
+        "biochem",
+        "code",
+        "travel",
+        "child"
+      ]
+    },
+    "situational": {
+      "name": "多模态情境安全",
+      "samples": 400,
+      "modality": "image+text",
+      "source": "MSSBench chat"
+    },
+    "image_risk": {
+      "name": "图像风险识别",
+      "samples": 100,
+      "modality": "image+text",
+      "source": "USB-SafeBench vulnerability_eval"
+    }
+  },
+  "labels": {
+    "image_risk/safe": 13,
+    "image_risk/unsafe": 87,
+    "scenario/safe": 567,
+    "scenario/unsafe": 483,
+    "situational/safe": 200,
+    "situational/unsafe": 200
+  },
+  "criteria_count": 72,
+  "image_count": 500
+}

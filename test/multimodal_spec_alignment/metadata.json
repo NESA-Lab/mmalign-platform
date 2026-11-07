@@ -1,0 +1,56 @@
+{
+  "name": "MMAlign 多模态场景规约对齐评测集",
+  "version": "1.0",
+  "sample_count": 1231,
+  "scenario_count": 5,
+  "criteria_count": 100,
+  "image_count": 1231,
+  "scenarios": {
+    "child": {
+      "name_zh": "儿童内容",
+      "samples": 247,
+      "safe": 48,
+      "unsafe": 199,
+      "criteria": 20
+    },
+    "cyberspace": {
+      "name_zh": "网络空间安全",
+      "samples": 245,
+      "safe": 48,
+      "unsafe": 197,
+      "criteria": 20
+    },
+    "daily": {
+      "name_zh": "日常生活",
+      "samples": 247,
+      "safe": 50,
+      "unsafe": 197,
+      "criteria": 20
+    },
+    "health": {
+      "name_zh": "健康咨询",
+      "samples": 247,
+      "safe": 50,
+      "unsafe": 197,
+      "criteria": 20
+    },
+    "travel": {
+      "name_zh": "出行规划",
+      "samples": 245,
+      "safe": 50,
+      "unsafe": 195,
+      "criteria": 20
+    }
+  },
+  "labels": {
+    "safe": 246,
+    "unsafe": 985
+  },
+  "image_generation": {
+    "model": "stabilityai/stable-diffusion-3.5-medium",
+    "steps": 50,
+    "guidance_scale": 7.5,
+    "generated_size": 1024,
+    "stored_size": 512
+  }
+}
