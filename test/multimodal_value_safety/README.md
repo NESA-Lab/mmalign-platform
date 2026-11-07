@@ -85,8 +85,6 @@ models:
 
 ## 评测 code & data
 
-评测对象：Intern-S2-Preview 35B（官方 API）　｜　评测日期：2026-11-07
-
 | 数据交付信息表 | | |
 |---|---|---|
 | 评测数据路径 |  | https://github.com/NESA-Lab/mmalign-platform/tree/main/test/multimodal_value_safety<br>下载：git clone https://github.com/NESA-Lab/mmalign-platform.git，数据在 test/multimodal_value_safety/（samples.jsonl、criteria.json、images/） |
