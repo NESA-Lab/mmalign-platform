@@ -70,8 +70,6 @@ OpenAI 兼容接口的 `base_url`、`model_name`、`api_key_env`，可选 `tempe
 
 ## 评测 code & data
 
-评测对象：Intern-S2-Preview 35B（官方 API）　｜　评测日期：2026-11-07
-
 | 数据交付信息表 | | |
 |---|---|---|
 | 评测数据路径 |  | https://github.com/NESA-Lab/mmalign-platform/tree/main/test/multimodal_spec_alignment<br>下载：git clone https://github.com/NESA-Lab/mmalign-platform.git，数据在 test/multimodal_spec_alignment/（samples.jsonl、criteria.json、scenarios.json、images/） |
