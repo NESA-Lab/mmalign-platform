@@ -83,6 +83,22 @@ models:
 
 以上指标对全体样本、各子集以及子集内的 safe / unsafe 样本分别给出。
 
+## 评测 code & data
+
+评测对象：Intern-S2-Preview 35B（官方 API）　｜　评测日期：2026-11-07
+
+| 数据交付信息表 | | |
+|---|---|---|
+| 评测数据路径 |  | https://github.com/NESA-Lab/mmalign-platform/tree/main/test/multimodal_value_safety<br>下载：git clone https://github.com/NESA-Lab/mmalign-platform.git，数据在 test/multimodal_value_safety/（samples.jsonl、criteria.json、images/） |
+| Meta Info | benchmark 名称 | MMAlign 多模态价值观安全评测集（v1.0），3 个子集：<br>① 应用场景价值观安全（教育、隐私保护、医疗健康、生化实验、编程与网络安全、出行与公共安全、儿童与未成年人）<br>② 多模态情境安全（图像来自 MSSBench，安全 / 危险情境成对）　③ 图像风险识别（图像来自 USB-SafeBench） |
+| Meta Info | 评测条数 | 1,550 条：① 1,050（文本）　② 400（图像 + 文本）　③ 100（图像 + 文本）；含 500 张图像；safe 780 / unsafe 770<br>72 条细粒度价值评估标准：① 56 条（7 场景 × 4 条安全 + 4 条行为）　② 8 条　③ 8 条 |
+| Meta Info | 类型<br>（安全/通用/幻觉/cyber 等） | 安全（多模态价值观安全；含场景规约遵循、情境风险识别、图像风险识别，code 场景涉及网络安全） |
+| Meta Info | 评测脚本入口 | test/multimodal_value_safety/evaluate.py（一键评测，可同时评测多个模型）<br>python test/multimodal_value_safety/evaluate.py --models &lt;模型ID&gt;[,&lt;模型ID&gt;…] --judge &lt;评审模型ID&gt; --concurrency 4<br>模型在 configs/models.yaml 中配置（OpenAI 兼容接口：base_url、model_name、api_key_env，可选 extra_body） |
+| Meta Info | 评测参数 | 模型：intern-s2-preview-35b（官方 API，OpenAI 兼容）；thinking 关闭（extra_body: thinking_mode=false）；temperature 0；max_tokens 8192；超时 600 s；可重试错误（限流 / 超时）自动退避重试<br>作答：直接回答原始请求，带图样本同时传入图像，不附加安全规范<br>评审：gpt-5.6-luna，temperature 0，max_tokens 2048；逐条判定样本所属场景 / 子集的标准（YES / NO / NA） |
+| Meta Info | 评测时间 | 并发 3，共 117 分钟（1,550 条；含评审调用） |
+| 评测结果<br>& 日志 | Intern-S2 的<br>基础评分 | **规范通过率 74.06%（总指标）**　安全规范 75.22%　行为规范 72.93%<br>响应率 75.94%（1,177/1,550）；其余 373 条被 Intern 服务端安全策略直接拦截<br>分子集规范通过率：① 86.85%　② 55.59%　③ 80.44% |
+| 评测结果<br>& 日志 | Intern-S2 的<br>评测 log | test/multimodal_value_safety/baseline/intern-s2-preview-35b/：<br>responses.jsonl（1,550 条：回答、token 用量、耗时、逐条标准判定与评审理由）、summary.json（全部指标与运行参数） |
+
 ## 输出
 
 ```

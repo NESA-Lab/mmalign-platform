@@ -68,6 +68,22 @@ OpenAI 兼容接口的 `base_url`、`model_name`、`api_key_env`，可选 `tempe
 
 以上指标对全体样本、各场景以及 safe / unsafe 样本分别给出。
 
+## 评测 code & data
+
+评测对象：Intern-S2-Preview 35B（官方 API）　｜　评测日期：2026-11-07
+
+| 数据交付信息表 | | |
+|---|---|---|
+| 评测数据路径 |  | https://github.com/NESA-Lab/mmalign-platform/tree/main/test/multimodal_spec_alignment<br>下载：git clone https://github.com/NESA-Lab/mmalign-platform.git，数据在 test/multimodal_spec_alignment/（samples.jsonl、criteria.json、scenarios.json、images/） |
+| Meta Info | benchmark 名称 | MMAlign 多模态场景规约对齐评测集（v1.0），5 个应用场景：儿童内容、网络空间安全、日常生活、健康咨询、出行规划<br>每个场景有一套定制化规约（安全边界 + 行为偏好），模型需结合图像与文本作答；规约体系参考 SpecBench |
+| Meta Info | 评测条数 | 1,231 条图文样本（每条一张图像）：儿童内容 247、网络空间安全 245、日常生活 247、健康咨询 247、出行规划 245；safe 246 / unsafe 985<br>100 条细粒度规约：每个场景 10 条安全规约 + 10 条行为规约 |
+| Meta Info | 类型<br>（安全/通用/幻觉/cyber 等） | 安全（多模态价值观安全 / 场景规约对齐；网络空间安全场景属 cyber 类） |
+| Meta Info | 评测脚本入口 | test/multimodal_spec_alignment/evaluate.py（一键评测，可同时评测多个模型）<br>python test/multimodal_spec_alignment/evaluate.py --models &lt;模型ID&gt;[,&lt;模型ID&gt;…] --judge &lt;评审模型ID&gt; --concurrency 4<br>模型在 configs/models.yaml 中配置（OpenAI 兼容接口：base_url、model_name、api_key_env，可选 extra_body） |
+| Meta Info | 评测参数 | 模型：intern-s2-preview-35b（官方 API，OpenAI 兼容）；thinking 关闭（extra_body: thinking_mode=false）；temperature 0；max_tokens 8192；超时 600 s；可重试错误（限流 / 超时）自动退避重试<br>作答：图像 + 用户请求直接作答，不附加规约文本<br>评审：gpt-5.6-luna，temperature 0，max_tokens 2048；结合场景说明、图像描述与风险说明，逐条判定该场景 20 条规约（YES / NO / NA） |
+| Meta Info | 评测时间 | 并发 3，共 204 分钟（1,231 条；含评审调用） |
+| 评测结果<br>& 日志 | Intern-S2 的<br>基础评分 | **规约通过率 56.47%（总指标）**　安全规约 78.93%　行为规约 43.82%<br>响应率 97.97%（1,206/1,231）；其余 25 条被 Intern 服务端安全策略直接拦截<br>分场景规约通过率：儿童内容 65.73%　网络空间安全 44.26%　日常生活 43.56%　健康咨询 51.58%　出行规划 85.35% |
+| 评测结果<br>& 日志 | Intern-S2 的<br>评测 log | test/multimodal_spec_alignment/baseline/intern-s2-preview-35b/：<br>responses.jsonl（1,231 条：回答、token 用量、耗时、逐条规约判定与评审理由）、summary.json（全部指标与运行参数） |
+
 ## 输出
 
 ```
