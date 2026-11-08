@@ -1,0 +1,78 @@
+{
+ "root": "source_root",
+ "processor": "Qwen3.5-VL processor (patch 16, merge 2)",
+ "max_seq_length": 262144,
+ "passed": true,
+ "checks": {
+  "structure": {
+   "pass": true,
+   "errors": []
+  },
+  "blocks": {
+   "pass": true,
+   "errors": []
+  },
+  "tools": {
+   "pass": true,
+   "errors": []
+  },
+  "media": {
+   "pass": true,
+   "errors": []
+  },
+  "budget": {
+   "pass": true,
+   "errors": []
+  },
+  "render": {
+   "pass": true,
+   "errors": []
+  }
+ },
+ "records": 10000,
+ "records_with_image": 10000,
+ "records_text_only": 0,
+ "images_registered": 9804,
+ "images_referenced": 9804,
+ "roles": {
+  "user": 10000,
+  "assistant": 10000
+ },
+ "tokens": {
+  "total": 11577777,
+  "trainable": 5195257,
+  "image": 5306414,
+  "per_sample_total": {
+   "mean": 1157.8,
+   "p50": 874,
+   "p90": 1569,
+   "p99": 8238,
+   "max": 9358,
+   "min": 293
+  },
+  "per_sample_trainable": {
+   "mean": 519.5,
+   "p50": 498,
+   "p90": 781,
+   "p99": 1158,
+   "max": 1764,
+   "min": 169
+  },
+  "per_image": {
+   "mean": 530.6,
+   "p50": 152,
+   "p90": 964,
+   "p99": 7347,
+   "max": 8177,
+   "min": 66
+  },
+  "total_length_hist": {
+   "<=512": 780,
+   "<=1024": 5860,
+   "<=2048": 2606,
+   "<=4096": 415,
+   "<=8192": 238,
+   ">8192": 101
+  }
+ }
+}
