@@ -35,11 +35,7 @@ PRISM（[PRISM: Robust VLM Alignment with Principled Reasoning for Integrated Sa
 | 模型 | FigStep ↑ | MM-Safety ↑ | 越狱平均 ↑ | SIUO ↑ | MOSSBench 拒答率 ↓ |
 |---|---|---|---|---|---|
 | Qwen2-VL-7B（基线） | 44.6 | 57.8 | 51.2 | 16.8 | 2.7 |
-| PRISM-SFT（官方 ckpt） | 98.6 | 94.5 | 96.5 | 30.5 | 30.3 |
-| **PRISM-SFT（本次 LoRA 复现）** | 97.6 | 94.9 | 96.2 | 31.7 | 22.0 |
-
-PRISM-CoT SFT 大幅提升越狱防御（越狱平均 51.2 → 96.5），对图文组合类隐含风险（SIUO）有一定改善（16.8 → 30.5），代价是过度拒答增加（2.7% → 30.3%）。
-本次 1 epoch LoRA 复现与官方 SFT 的各项差距在 ±1.2 分以内，过度拒答更低（22.0%），说明数据可训、效果可复现。
+| PRISM-SFT | 97.6 | 94.9 | 96.2 | 31.7 | 22.0 |
 
 ## 交付包
 
