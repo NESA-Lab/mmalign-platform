@@ -1,7 +1,6 @@
 # PRISM-CoT（SFT 数据）
 
-PRISM（[PRISM: Robust VLM Alignment with Principled Reasoning for Integrated Safety in Multimodality](https://arxiv.org/abs/2508.18649)）
-的安全推理 SFT 数据，按《多模态 SFT 数据交付规范 v1.0（图像）》整理交付。
+按《多模态 SFT 数据交付规范 v1.0（图像）》整理交付。
 
 ## 数据交付信息表
 
