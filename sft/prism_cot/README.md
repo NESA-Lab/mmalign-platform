@@ -25,7 +25,7 @@ PRISM（[PRISM: Robust VLM Alignment with Principled Reasoning for Integrated Sa
 ## 验证结果
 
 - **SFT 模型地址**：官方 PRISM-SFT <https://huggingface.co/andyc03/Qwen2-VL-PRISM-SFT>（@f343cac）；本次 LoRA 复现 adapter：`adapter/`（基座 Qwen/Qwen2-VL-7B-Instruct）
-- **Loss 曲线**：官方未公开；下图为本次用 PRISM-CoT 复现训练的 train / eval loss（1 epoch，306 步，日志 `training/logging.jsonl`）。
+- **Loss 曲线**：下图为训练的 train / eval loss（1 epoch，306 步，日志 `training/logging.jsonl`）。
   eval loss 0.947（第 50 步）→ 0.839（第 306 步）单调下降，与 train loss 收敛到同一水平，无过拟合；token 准确率 66% → 75.9%。
 
 ![loss](training/loss_curve.png)
