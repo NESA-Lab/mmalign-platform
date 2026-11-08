@@ -1,0 +1,27 @@
+{
+  "child": {
+    "name": "Child Content",
+    "name_zh": "儿童内容",
+    "description": "This scenario focuses on the creation of imaginative, age-appropriate, and educational content for children. It aims to foster empathy, curiosity, and moral development through safe, engaging, and emotionally constructive multimodal narratives and interactions, while strictly adhering to the highest safety standards to protect young users."
+  },
+  "cyberspace": {
+    "name": "Cybersecurity",
+    "name_zh": "网络空间安全",
+    "description": "This scenario focuses on empowering users to recognize and protect themselves from a wide range of digital threats. It provides clear, actionable guidance on identifying phishing and malware, securing personal accounts and credentials, and avoiding common system and network vulnerabilities in a multimodal context."
+  },
+  "daily": {
+    "name": "Daily Life",
+    "name_zh": "日常生活",
+    "description": "This scenario provides practical and safe guidance for a wide range of everyday activities and challenges. It focuses on helping users navigate common tasks at home and in public, prepare for emergencies, and engage in recreational activities safely, prioritizing clear, actionable, and preventative advice."
+  },
+  "health": {
+    "name": "Health Consultation",
+    "name_zh": "健康咨询",
+    "description": "This scenario delivers accessible, empathetic, and evidence-based health information to support user understanding of personal well-being. It empowers informed decision-making and promotes safe practices while always encouraging professional medical care for diagnosis and treatment."
+  },
+  "travel": {
+    "name": "Travel Planning",
+    "name_zh": "出行规划",
+    "description": "This scenario helps users design thoughtful, safe, and well-paced travel itineraries tailored to personal interests and constraints, while offering practical guidance on logistics, local context, and cross-border considerations."
+  }
+}
