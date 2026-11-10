@@ -330,16 +330,26 @@ class AdaShieldStaticMethod:
     Input is ``query + defense_prompt + query`` as in ``infer_figstep.py``. The
     adaptive variant (AdaShield-A) needs an offline-optimised defense-prompt pool
     and is not included. One model call.
+
+    The defense prompt refers to the image, and AdaShield targets image-borne
+    (structure-based) attacks, so by default it is applied only when the request
+    contains an image; text-only requests are forwarded unchanged (otherwise the
+    model tends to reply "there is no image attached"). Set
+    ``apply_without_image=True`` to wrap text-only requests as well.
     """
 
     name = "adashield_static"
     supported_modalities: set[Modality] = {"text", "image"}
 
     def __init__(
-        self, defense_prompt: str = ADASHIELD_STATIC_PROMPT, temperature: float | None = None
+        self,
+        defense_prompt: str = ADASHIELD_STATIC_PROMPT,
+        temperature: float | None = None,
+        apply_without_image: bool = False,
     ) -> None:
         self._defense = defense_prompt
         self._temperature = temperature
+        self._apply_without_image = apply_without_image
 
     def validate(self, scenario: Scenario, backend: ModelBackend) -> None:
         _validate(self.name, scenario, backend)
@@ -352,12 +362,13 @@ class AdaShieldStaticMethod:
         context: AlignContext | None = None,
         **kwargs: Any,
     ) -> AlignedResponse:
-        _, _, text, _ = _split_request(request)
-        req = _with_user(request, f"{text}\n{self._defense}\n{text}")
+        _, _, text, media = _split_request(request)
+        applied = self._apply_without_image or any(p.type == "input_image" for p in media)
+        req = _with_user(request, f"{text}\n{self._defense}\n{text}") if applied else request
         if self._temperature is not None:
             req = req.model_copy(update={"temperature": self._temperature})
         result = await model.generate(req)
-        return _response(self.name, result.text(), result.usage)
+        return _response(self.name, result.text(), result.usage, defense_applied=applied)
 
 
 # --------------------------------------------------------------------------- Intention Analysis
@@ -376,6 +387,7 @@ IA_ANSWER_PROMPT = (
     "normal response. "
     "Please make sure you strictly adhere to your own security restrictions."
 )
+IA_LANGUAGE_SUFFIX = " Respond in the same language as the original query."
 
 
 class IntentionAnalysisMethod:
@@ -385,13 +397,19 @@ class IntentionAnalysisMethod:
     model to answer knowing that intention. Unlike ``vlm_safety_guard`` it does
     not audit against specifications and keeps the analysis in the dialogue
     history. Two model calls.
+
+    Deviation (on by default, ``match_user_language``): turn 2 also asks the model
+    to reply in the query's language, because the English IA prompts otherwise
+    make models answer non-English queries in English. Set it to ``False`` for a
+    strict reproduction.
     """
 
     name = "intention_analysis"
     supported_modalities: set[Modality] = {"text", "image"}
 
-    def __init__(self, temperature: float | None = None) -> None:
+    def __init__(self, temperature: float | None = None, match_user_language: bool = True) -> None:
         self._temperature = temperature
+        self._match_language = match_user_language
 
     def validate(self, scenario: Scenario, backend: ModelBackend) -> None:
         _validate(self.name, scenario, backend)
@@ -414,7 +432,9 @@ class IntentionAnalysisMethod:
                 "input": list(step1.input_messages())
                 + [
                     InputMessage(role="assistant", content=analysis.text()),
-                    InputMessage.user(IA_ANSWER_PROMPT),
+                    InputMessage.user(
+                        IA_ANSWER_PROMPT + (IA_LANGUAGE_SUFFIX if self._match_language else "")
+                    ),
                 ]
             }
         )

@@ -19,6 +19,8 @@
 #   text_threshold:         jailguard: KL-divergence threshold for text-only inputs
 #   image_threshold:        jailguard: KL-divergence threshold when images are mutated
 #   concurrency:            jailguard: max concurrent generations per sample
+#   apply_without_image:    adashield_static: also wrap text-only requests (default: image only)
+#   match_user_language:    intention_analysis: ask for a reply in the query's language
 
 methods:
   raw:
@@ -113,9 +115,11 @@ methods:
 
   adashield_static:
     type: adashield_static
+    apply_without_image: false
 
   intention_analysis:
     type: intention_analysis
+    match_user_language: true
 
   ecso:
     type: ecso

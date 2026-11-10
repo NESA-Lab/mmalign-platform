@@ -287,8 +287,8 @@ Prompt templates are copied from each official repository; deviations are listed
 | --- | --- | --- | --- |
 | `self_reminder` | 1 | github.com/yjw1029/Self-Reminder (`src/pia_defense.py`, template "Remind") | "ChatGPT" replaced by configurable `assistant_name` (default `AI assistant`); falls back to a user-text prefix when the backend has no system message |
 | `goal_prioritization` | 1 | github.com/thu-coai/JailbreakDefense_GoalPriority (`utils/utils.py`, `priority`) | `[Internal thoughts]` is moved to `thought`; only `[Final response]` is returned |
-| `adashield_static` | 1 | github.com/SaFo-Lab/AdaShield (`prompts/static_defense_prompt.txt`) | Adaptive AdaShield-A (needs an offline-optimised prompt pool) is not included |
-| `intention_analysis` | 2 | github.com/alphadl/SafeLLM_with_IntentionAnalysis (`demo/IA_demo.py`) | None |
+| `adashield_static` | 1 | github.com/SaFo-Lab/AdaShield (`prompts/static_defense_prompt.txt`) | Adaptive AdaShield-A (needs an offline-optimised prompt pool) is not included; applied only to requests with an image unless `apply_without_image: true` (the prompt refers to the image) |
+| `intention_analysis` | 2 | github.com/alphadl/SafeLLM_with_IntentionAnalysis (`demo/IA_demo.py`) | `match_user_language: true` (default) appends "Respond in the same language as the original query." to turn 2; set `false` for a strict reproduction |
 | `ecso` | 2 (safe) / 4 (unsafe) | github.com/gyhdog99/ECSO (`llava/eval/model_mmsafe_tell_ask.py`) | Text-only requests: the unsafe branch regenerates with the harmless instruction and no caption |
 | `jailguard` | `n_variants + 1` | github.com/shiningrain/JailGuard (`main_txt.py`, `main_img.py`) | Similarity uses backend `embed()` (cosine) or character trigrams instead of spaCy vectors, so thresholds may need re-calibration on a benign set; text policy uses punctuation insertion + random character insertion/replacement (no translation or targeted-insertion models); image mutation (rotate / blur / posterize) needs Pillow and data-URI images, otherwise only text is mutated |
 
@@ -306,8 +306,10 @@ goal_prioritization:
   type: goal_prioritization
 adashield_static:
   type: adashield_static
+  apply_without_image: false
 intention_analysis:
   type: intention_analysis
+  match_user_language: true
 ecso:
   type: ecso
   max_check_chars: 1927
