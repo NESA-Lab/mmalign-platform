@@ -150,6 +150,11 @@ def _build_method(method_id: str, method_type: str, cfg: dict[str, Any]) -> Infe
         from mmalign.methods.specbench_ttd import MultiAgentConsensusMethod
         return MultiAgentConsensusMethod(temperature=cfg.get("temperature", 0.2))
 
+    from mmalign.methods.safety_defenses import SAFETY_DEFENSES, build_safety_defense
+
+    if method_type in SAFETY_DEFENSES:
+        return build_safety_defense(method_type, cfg)
+
     raise UnknownMethodError(
         f"Unknown method type '{method_type}' for '{method_id}'. "
         "Supported: raw, vanilla, align3, self_refine, vanilla_specbench, "

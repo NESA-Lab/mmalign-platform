@@ -193,6 +193,15 @@ def _register_builtins() -> None:
     inference_align_registry.register("critic_revise_agent", _make_critic_revise_agent, builtin=True)
     inference_align_registry.register("risk_adaptive_agent", _make_risk_adaptive_agent, builtin=True)
     inference_align_registry.register("multi_agent_consensus", _make_multi_agent_consensus, builtin=True)
+    # Training-free safety defenses (methods/safety_defenses.py).
+    from mmalign.methods.safety_defenses import SAFETY_DEFENSES, build_safety_defense
+
+    for defense_type in SAFETY_DEFENSES:
+        inference_align_registry.register(
+            defense_type,
+            lambda cfg, t=defense_type: build_safety_defense(t, cfg),
+            builtin=True,
+        )
 
     # Evaluators — only register those that don't need a judge backend.
     # ``llm_judge`` resolves through the legacy loader path because it

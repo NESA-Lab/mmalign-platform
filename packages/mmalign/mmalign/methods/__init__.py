@@ -20,6 +20,15 @@ from .specbench_ttd import (
     ZeroThinkMethod,
 )
 
+from .safety_defenses import (
+    SelfReminderMethod,
+    GoalPrioritizationMethod,
+    AdaShieldStaticMethod,
+    IntentionAnalysisMethod,
+    ECSOMethod,
+    JailGuardMethod,
+)
+
 __all__ = [
     "RawMethod",
     "VanillaMethod",
@@ -38,4 +47,10 @@ __all__ = [
     "CriticReviseAgentMethod",
     "RiskAdaptiveAgentMethod",
     "MultiAgentConsensusMethod",
+    "SelfReminderMethod",
+    "GoalPrioritizationMethod",
+    "AdaShieldStaticMethod",
+    "IntentionAnalysisMethod",
+    "ECSOMethod",
+    "JailGuardMethod",
 ]
