@@ -1,13 +1,15 @@
 # Intern-S2 inference adaptation
 
 This directory contains the MMAlign inference-time adaptation package for the
-official `intern-s2-preview-35b` API. It covers the 17 inference entries:
+official `intern-s2-preview-35b` API. It covers the 23 inference entries:
 
 `raw`, `vanilla`, `align3`, `self_refine`, `vanilla_specbench`,
 `align3_specbench`, `zero_think`, `more_think`, `best_of_n`, `tpo`,
 `ipr_prompt_refine`, `vlm_safety_guard`, `overrefusal_check`,
 `user_conditioned_safety_critic`, `critic_revise_agent`,
-`risk_adaptive_agent`, and `multi_agent_consensus`.
+`risk_adaptive_agent`, `multi_agent_consensus`, and the six training-free
+safety defenses `self_reminder`, `goal_prioritization`, `adashield_static`,
+`intention_analysis`, `ecso` and `jailguard`.
 
 DPO and SFT are excluded because they require local weight training and are not
 API-only adaptations.
@@ -23,6 +25,12 @@ API-only adaptations.
   empty-answer rejection and truncated-answer detection.
 - `configs/models_intern_s2.yaml`: API and local-serving model entries.
 - `configs/methods.yaml`: method parameters used by the runner.
+- Safety defenses: implemented in the main package
+  (`packages/mmalign/mmalign/methods/safety_defenses.py`) rather than overlaid here,
+  because they already keep every image and pass the request metadata through,
+  so `enable_thinking` reaches `InternBackend` unchanged. Only their
+  `configs/methods.yaml` entries and tests (`tests/test_intern_remaining.py`) live here.
+  See `intern_s2_all_inference_methods.md` for Intern-S2 results.
 
 Best-of-N and TPO require an injected reward model with
 `AlignContext(metadata={"require_reward_model": True})` for strict scoring.

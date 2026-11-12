@@ -632,7 +632,10 @@ def _mutate_image_part(part: InputContentPart, rng: random.Random) -> InputConte
         from PIL import Image, ImageFilter, ImageOps
     except ImportError:
         return part
-    image = Image.open(io.BytesIO(base64.b64decode(match.group(2)))).convert("RGB")
+    try:
+        image = Image.open(io.BytesIO(base64.b64decode(match.group(2)))).convert("RGB")
+    except Exception:  # undecodable data URI: leave the image unmutated rather than fail
+        return part
     choice = rng.choices(["RR", "BL", "RP"], weights=[0.34, 0.45, 0.21])[0]
     if choice == "RR":
         image = image.rotate(rng.uniform(0.1, 180), expand=False)

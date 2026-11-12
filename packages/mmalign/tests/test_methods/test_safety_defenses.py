@@ -366,3 +366,12 @@ async def test_intention_analysis_language_instruction_toggle(scenario: Scenario
     await IntentionAnalysisMethod(match_user_language=False).align(_request(False), off, scenario)
     assert _text(on.requests[1]).endswith("Respond in the same language as the original query.")
     assert _text(off.requests[1]).endswith("strictly adhere to your own security restrictions.")
+
+
+def test_jailguard_leaves_undecodable_image_unchanged() -> None:
+    import random
+
+    from mmalign.methods.safety_defenses import _mutate_image_part
+
+    part = InputContentPart.image_url_part("data:image/png;base64,dGVzdA==")
+    assert _mutate_image_part(part, random.Random(0)) == part
