@@ -1,7 +1,7 @@
 # Intern-S2 inference method adaptation
 
-This extends the six-method integration to all seventeen inference entries
-(including `raw`). DPO and SFT weight training are outside this integration.
+This extends the six-method integration to all twenty-three inference entries
+(including `raw` and six training-free safety defenses). DPO and SFT weight training are outside this integration.
 
 ## Runtime configuration
 
@@ -47,6 +47,33 @@ The `more_think` API mode is repeated answer checking with native thinking
 enabled. It does not expose or append hidden reasoning, and does not promise
 the original token-level thought-continuation mechanism. Multi-agent roles
 share one model; this is not evidence of independently trained agents.
+
+## Training-free safety defenses
+
+| Method | Integration behavior with Intern-S2 |
+| --- | --- |
+| self_reminder | Reminder as system prompt (Intern supports system messages) plus suffix; image kept. |
+| goal_prioritization | Few-shot priority prompt; returns `[Final response]`, internal thoughts in `thought`. |
+| adashield_static | Static defense prompt sandwiched around the query; applied only to image requests by default. |
+| intention_analysis | Two turns in one dialogue; image stays in the first user turn; replies in the query language by default. |
+| ecso | Self-check with the image; if unsafe, captions with the image and answers from the caption **without** the image (by design). |
+| jailguard | 8 mutated text/image variants; thresholds calibrated on intern-s2-preview-35b (text 1.43, image 0.105). |
+
+All defenses copy the request (`model_copy`), so `metadata.enable_thinking`
+reaches `InternBackend` on every call. `InternBackend` rejects empty answers,
+so a JailGuard variant that comes back empty fails the whole sample explicitly.
+
+Sampled evaluation on the MMAlign value-safety and spec-alignment packages
+(judge gpt-5.6-luna) and the JailGuard calibration are reported in
+`docs/inference_time_methods.md`: `self_reminder` and `intention_analysis`
+were the most reliable; `adashield_static` and uncalibrated `jailguard`
+over-refused benign requests (>60%).
+
+Known limitation found while adding these tests: `InternBackend` checks
+`result.metadata["finish_reasons"]` for `length`, but the main package's
+`OpenAIBackend` does not populate that field, so truncated answers are not
+detected (`test_intern_rejects_empty_or_truncated_final_answer[...length]` fails
+on main as well).
 
 ## Reproduction
 

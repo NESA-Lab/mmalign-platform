@@ -1,7 +1,7 @@
 # Method registry.
 #
 # Fields:
-#   type:                   raw | vanilla | align3 | self_refine | vanilla_specbench | align3_specbench | zero_think | more_think | best_of_n | tpo | ipr_prompt_refine | vlm_safety_guard | overrefusal_check | user_conditioned_safety_critic | critic_revise_agent | risk_adaptive_agent | multi_agent_consensus
+#   type:                   raw | vanilla | align3 | self_refine | vanilla_specbench | align3_specbench | zero_think | more_think | best_of_n | tpo | ipr_prompt_refine | vlm_safety_guard | overrefusal_check | user_conditioned_safety_critic | critic_revise_agent | risk_adaptive_agent | multi_agent_consensus | self_reminder | goal_prioritization | adashield_static | intention_analysis | ecso | jailguard
 #   temperature:            generation temperature
 #   max_stage_tokens:       max tokens per align3 stage
 #   include_safety_specs:   include safety specs in prompt (vanilla)
@@ -96,3 +96,30 @@ methods:
   multi_agent_consensus:
     type: multi_agent_consensus
     temperature: 0.2
+
+  # --- training-free safety defenses (packages/mmalign/mmalign/methods/safety_defenses.py) ---
+  self_reminder:
+    type: self_reminder
+    assistant_name: AI assistant
+
+  goal_prioritization:
+    type: goal_prioritization
+
+  adashield_static:
+    type: adashield_static
+    apply_without_image: false
+
+  intention_analysis:
+    type: intention_analysis
+    match_user_language: true
+
+  ecso:
+    type: ecso
+    max_check_chars: 1927
+
+  jailguard:
+    type: jailguard
+    n_variants: 8
+    text_threshold: 1.43    # calibrated on intern-s2-preview-35b (char-trigram similarity); paper: 0.02
+    image_threshold: 0.105  # calibrated; paper: 0.025
+    concurrency: 4

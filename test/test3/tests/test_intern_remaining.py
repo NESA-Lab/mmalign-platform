@@ -212,3 +212,55 @@ async def test_enhanced_audit_is_opt_in(method):
     request, scenario, _ = inputs()
     result = await method.align(request, MockBackend(model_id="mock"), scenario)
     assert result.metadata["final_audit"] == "legacy"
+
+
+# --------------------------------------------------------------------------- safety defenses
+from mmalign.methods.safety_defenses import (AdaShieldStaticMethod, ECSOMethod,  # noqa: E402
+    GoalPrioritizationMethod, IntentionAnalysisMethod, JailGuardMethod, SelfReminderMethod)
+
+
+def _images_in(sent):
+    return [p for m in sent.input_messages() if not isinstance(m.content, str)
+        for p in m.content if p.type == "input_image"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("method", [SelfReminderMethod(), GoalPrioritizationMethod(),
+    AdaShieldStaticMethod(), IntentionAnalysisMethod(), JailGuardMethod(n_variants=3, seed=0)])
+async def test_safety_defenses_keep_image_and_thinking_flag(method):
+    request, scenario, image = inputs()
+    request = request.model_copy(update={"metadata": {"enable_thinking": False}})
+    seen = []
+
+    class Recorder(MockBackend):
+        thinking_control = True
+
+        async def generate(self, request, **kwargs):
+            seen.append(request)
+            return response("A red square.")
+
+    await method.align(request, Recorder(model_id="mock"), scenario)
+    assert seen
+    for sent in seen:
+        assert len(_images_in(sent)) == 1          # JailGuard sends mutated copies of the one image
+        assert sent.metadata["enable_thinking"] is False
+    if not isinstance(method, JailGuardMethod):
+        assert all(_images_in(sent) == [image] for sent in seen)
+
+
+@pytest.mark.asyncio
+async def test_ecso_closes_eyes_only_in_the_final_unsafe_step():
+    request, scenario, image = inputs()
+    seen = []
+    replies = iter(["harmful answer", "Yes", "A red square on white.", "A safe answer."])
+
+    class Recorder(MockBackend):
+        thinking_control = True
+
+        async def generate(self, request, **kwargs):
+            seen.append(request)
+            return response(next(replies))
+
+    result = await ECSOMethod().align(request, Recorder(model_id="mock"), scenario)
+    assert result.text() == "A safe answer." and len(seen) == 4
+    assert [_images_in(s) == [image] for s in seen] == [True, True, True, False]

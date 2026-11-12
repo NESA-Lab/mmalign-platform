@@ -233,6 +233,30 @@ _METHOD_DESCRIPTIONS.update({
     "critic_revise_agent": "Agent workflow: draft, critique, and revise under scenario specifications.",
     "risk_adaptive_agent": "Agent workflow: assess risk and route to lightweight or stronger deliberation.",
     "multi_agent_consensus": "Agent workflow: safety, behavior, and refusal reviewers revise a candidate answer.",
+    "self_reminder": (
+        "Self-Reminder (Nature MI 2023): responsibility reminder in the system prompt and "
+        "after the query."
+    ),
+    "goal_prioritization": (
+        "Goal Prioritization (ACL 2024): few-shot prompt prioritising safety over "
+        "helpfulness; returns the final response."
+    ),
+    "adashield_static": (
+        "AdaShield-S (ECCV 2024): static defense prompt that checks the image and "
+        "instruction for structure-based jailbreaks."
+    ),
+    "intention_analysis": (
+        "Intention Analysis: first identify the query's essential intention, then answer "
+        "in the same dialogue."
+    ),
+    "ecso": (
+        "ECSO (ECCV 2024): self-check the answer; if harmful, caption the image and "
+        "answer from the caption without the image."
+    ),
+    "jailguard": (
+        "JailGuard: mutate the text/image input, compare response divergence, and refuse "
+        "when an attack is detected."
+    ),
 })
 
 _METHOD_MODALITIES.update({
@@ -249,6 +273,12 @@ _METHOD_MODALITIES.update({
     "critic_revise_agent": ["text", "image"],
     "risk_adaptive_agent": ["text", "image"],
     "multi_agent_consensus": ["text", "image"],
+    "self_reminder": ["text", "image"],
+    "goal_prioritization": ["text", "image"],
+    "adashield_static": ["text", "image"],
+    "intention_analysis": ["text", "image"],
+    "ecso": ["text", "image"],
+    "jailguard": ["text", "image"],
 })
 
 
