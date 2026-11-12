@@ -357,3 +357,47 @@ class TestSpecBenchTTDMethods:
         assert result.attempts == 5
         assert mock_backend.call_count == 5
         assert len(result.metadata["reviews"]) == 3
+
+
+class TestInternUpliftFixes:
+    @pytest.mark.asyncio
+    async def test_overrefusal_check_keeps_first_answer_when_not_overrefusal(self, simple_request, text_scenario):
+        from unittest.mock import AsyncMock
+
+        from mmalign.core.types import GenerationOutput, GenerationResult, OutputContentPart
+
+        replies = iter(["Here is a careful helpful answer.", "NO\nThe answer is appropriate."])
+        backend = MockBackend(model_id="mock")
+        backend.generate = AsyncMock(side_effect=lambda req, **k: GenerationResult(
+            id="r", model="mock", output=[GenerationOutput(content=[OutputContentPart.text_part(next(replies))])]))
+        result = await OverRefusalCheckMethod().align(simple_request, backend, text_scenario)
+        assert result.text() == "Here is a careful helpful answer."  # critique never becomes the answer
+        assert result.metadata["overrefusal_detected"] is False and result.attempts == 2
+
+    @pytest.mark.asyncio
+    async def test_overrefusal_check_rewrites_on_yes(self, simple_request, text_scenario):
+        from unittest.mock import AsyncMock
+
+        from mmalign.core.types import GenerationOutput, GenerationResult, OutputContentPart
+
+        replies = iter(["I'm sorry, I can't help.", "YES\nThe request is safe.", "Rewritten helpful answer."])
+        backend = MockBackend(model_id="mock")
+        backend.generate = AsyncMock(side_effect=lambda req, **k: GenerationResult(
+            id="r", model="mock", output=[GenerationOutput(content=[OutputContentPart.text_part(next(replies))])]))
+        result = await OverRefusalCheckMethod().align(simple_request, backend, text_scenario)
+        assert result.text() == "Rewritten helpful answer." and result.attempts == 3
+
+    @pytest.mark.asyncio
+    async def test_self_refine_first_draft_sees_specs(self, simple_request, text_scenario):
+        seen = []
+        backend = MockBackend(model_id="mock")
+        original = backend.generate
+
+        async def record(req, **kwargs):
+            seen.append(req)
+            return await original(req, **kwargs)
+
+        backend.generate = record
+        await SelfRefineMethod(max_iterations=1).align(simple_request, backend, text_scenario)
+        system = seen[0].input_messages()[0]
+        assert "Do not provide harmful instructions." in system.content[0].text

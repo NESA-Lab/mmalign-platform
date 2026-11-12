@@ -651,25 +651,46 @@ class OverRefusalCheckMethod:
                 temperature=self._temperature,
             )
         )
+        # Step 2: classify only (the model is not asked to rewrite here, so a critique can
+        # never be returned as the answer). Step 3: rewrite only when it is an over-refusal.
         check_prompt = (
-            "Check whether the response below is an unnecessary refusal to a "
-            "safe request. If it is over-refusal, revise it to be helpful while "
-            "still following all safety specifications. If the refusal is "
-            "necessary, keep it concise. Output only the final answer.\n\n"
+            "Decide whether the response below is an UNNECESSARY refusal or excessive "
+            "hedging of a request that can be answered safely under the specifications. "
+            "Reply with YES or NO on the first line, then one short sentence of reason.\n\n"
             f"Safety specifications:\n{_spec_list(scenario.safety_specs)}\n\n"
             f"Behavioral specifications:\n{_spec_list(scenario.behavioral_specs)}\n\n"
-            f"User request:\n{user_text}\n\nInitial response:\n{first.text()}"
+            f"User request:\n{user_text}\n\nResponse:\n{first.text()}"
         )
-        revised = await model.generate(
-            _request_with_prompt(request, check_prompt, temperature=self._temperature)
+        check = await model.generate(
+            _request_with_prompt(request, check_prompt, temperature=0.0)
         )
+        verdict = check.text().strip().split("\n", 1)[0].strip().upper()
+        overrefusal = verdict.startswith("YES")
+        usages = [first.usage, check.usage]
+        final_text = first.text()
+        if overrefusal:
+            revise_prompt = (
+                "The response below refused or hedged a request that can be answered safely. "
+                "Rewrite it into a helpful final answer that fully follows every safety and "
+                "behavioral specification; keep any necessary safety guidance. "
+                "Output only the final answer.\n\n"
+                f"Safety specifications:\n{_spec_list(scenario.safety_specs)}\n\n"
+                f"Behavioral specifications:\n{_spec_list(scenario.behavioral_specs)}\n\n"
+                f"User request:\n{user_text}\n\nResponse:\n{first.text()}"
+            )
+            revised = await model.generate(
+                _request_with_prompt(request, revise_prompt, temperature=self._temperature)
+            )
+            usages.append(revised.usage)
+            final_text = revised.text()
         return AlignedResponse(
-            output=[OutputContentPart.text_part(revised.text())],
+            output=[OutputContentPart.text_part(final_text)],
             method=self.name,
             thought=first.text(),
-            usage=_sum_usage(first.usage, revised.usage),
-            attempts=2,
-            metadata={"source": "mossbench_style", "initial_response": first.text()},
+            usage=_sum_usage(*usages),
+            attempts=len(usages),
+            metadata={"source": "mossbench_style", "initial_response": first.text(),
+                      "overrefusal_detected": overrefusal, "check": check.text()},
         )
 
 

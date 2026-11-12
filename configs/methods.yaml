@@ -19,6 +19,8 @@
 #   text_threshold:         jailguard: KL-divergence threshold for text-only inputs
 #   image_threshold:        jailguard: KL-divergence threshold when images are mutated
 #   concurrency:            jailguard: max concurrent generations per sample
+#   use_specs:              safety defenses: also give the model the scenario specifications
+#   safe_refusal / refusal_style / on_detect: refuse with explanation + safe alternative (spec variants)
 #   apply_without_image:    adashield_static: also wrap text-only requests (default: image only)
 #   match_user_language:    intention_analysis: ask for a reply in the query's language
 
@@ -131,3 +133,40 @@ methods:
     text_threshold: 1.43    # calibrated (char-trigram similarity, intern-s2-preview-35b); paper: 0.02
     image_threshold: 0.105  # calibrated; paper: 0.025
     concurrency: 4
+
+  # --- spec-enhanced variants of the safety defenses: same defense + scenario specifications
+  #     (worded like `vanilla`). Compare with `vanilla` to see what the defense itself adds.
+  self_reminder_spec:
+    type: self_reminder
+    assistant_name: AI assistant
+    use_specs: true
+
+  goal_prioritization_spec:
+    type: goal_prioritization
+    use_specs: true
+    safe_refusal: true          # refuse with explanation + safe alternative
+
+  adashield_static_spec:
+    type: adashield_static
+    apply_without_image: false
+    use_specs: true
+    refusal_style: safe_alternative   # instead of answering "I am sorry"
+
+  intention_analysis_spec:
+    type: intention_analysis
+    match_user_language: true
+    use_specs: true
+
+  ecso_spec:
+    type: ecso
+    max_check_chars: 1927
+    use_specs: true
+
+  jailguard_spec:
+    type: jailguard
+    n_variants: 8
+    text_threshold: 1.43
+    image_threshold: 0.105
+    concurrency: 4
+    use_specs: true
+    on_detect: safe_response    # guarded answer with safe alternative instead of a fixed refusal
