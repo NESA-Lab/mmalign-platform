@@ -69,11 +69,12 @@ Sampled evaluation on the MMAlign value-safety and spec-alignment packages
 were the most reliable; `adashield_static` and uncalibrated `jailguard`
 over-refused benign requests (>60%).
 
-Known limitation found while adding these tests: `InternBackend` checks
-`result.metadata["finish_reasons"]` for `length`, but the main package's
-`OpenAIBackend` does not populate that field, so truncated answers are not
-detected (`test_intern_rejects_empty_or_truncated_final_answer[...length]` fails
-on main as well).
+Truncation detection: `InternBackend` rejects answers whose
+`result.metadata["finish_reasons"]` contains `length`. The main package's
+`OpenAIBackend` now records `finish_reasons` (chat: each choice's
+`finish_reason`; Responses API: `status="incomplete"` with
+`incomplete_details.reason="max_output_tokens"` is normalised to `length`), so
+this check is effective; before that fix it never fired.
 
 ## Reproduction
 
