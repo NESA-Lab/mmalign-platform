@@ -254,12 +254,26 @@ class OpenAIBackend:
                 "output_tokens": getattr(usage_raw, "output_tokens", 0),
             }
 
+        # Responses API reports truncation as status="incomplete" with
+        # incomplete_details.reason="max_output_tokens"; normalise it to "length".
+        finish_reasons: list[str] = []
+        status = getattr(resp, "status", None)
+        if status == "incomplete":
+            reason = getattr(getattr(resp, "incomplete_details", None), "reason", None)
+            if reason == "max_output_tokens":
+                finish_reasons.append("length")
+            else:
+                finish_reasons.append(str(reason or "incomplete"))
+        elif status == "completed":
+            finish_reasons.append("stop")
+
         return GenerationResult(
             id=getattr(resp, "id", str(uuid.uuid4())),
             model=self._model_name,
             output=[GenerationOutput(content=output_parts)],
             usage=usage,
-            metadata={"latency_ms": latency_ms, "api_style": "responses"},
+            metadata={"latency_ms": latency_ms, "api_style": "responses",
+                      "finish_reasons": finish_reasons},
         )
 
     async def _generate_chat(
@@ -296,12 +310,17 @@ class OpenAIBackend:
                 "output_tokens": usage_raw.completion_tokens,
             }
 
+        # finish_reason per choice ("stop", "length", "content_filter", ...): lets callers
+        # detect truncated answers (e.g. the Intern adapter rejects "length").
+        finish_reasons = [getattr(c, "finish_reason", None) for c in resp.choices]
+
         return GenerationResult(
             id=resp.id,
             model=self._model_name,
             output=[GenerationOutput(content=output_parts)],
             usage=usage,
-            metadata={"latency_ms": latency_ms, "api_style": "chat_completions"},
+            metadata={"latency_ms": latency_ms, "api_style": "chat_completions",
+                      "finish_reasons": [r for r in finish_reasons if r is not None]},
         )
 
     async def embed(

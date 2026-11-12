@@ -246,3 +246,58 @@ class TestOpenAIContentConversion:
         )
         with pytest.raises(IncompatibleBackendError):
             _messages_to_chat(req)
+
+
+# ---------------------------------------------------------------------------
+# OpenAIBackend: finish reasons (truncation detection)
+# ---------------------------------------------------------------------------
+
+class TestOpenAIFinishReasons:
+    @staticmethod
+    def _request():
+        return GenerationRequest(model="m", input=[InputMessage.user("hi")])
+
+    @staticmethod
+    def _backend(api_style: str, create):
+        from types import SimpleNamespace
+
+        from mmalign.backends.openai import OpenAIBackend
+
+        backend = OpenAIBackend(model_id="m", api_style=api_style, api_key="x")
+        if api_style == "chat_completions":
+            completions = SimpleNamespace(create=create)
+            backend._client = SimpleNamespace(chat=SimpleNamespace(completions=completions))
+        else:
+            backend._client = SimpleNamespace(responses=SimpleNamespace(create=create))
+        return backend
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("finish", ["stop", "length"])
+    async def test_chat_records_finish_reasons(self, finish: str):
+        from types import SimpleNamespace
+        from unittest.mock import AsyncMock
+
+        choice = SimpleNamespace(finish_reason=finish,
+                                 message=SimpleNamespace(refusal=None, content="partial"))
+        create = AsyncMock(return_value=SimpleNamespace(id="r", usage=None, choices=[choice]))
+        backend = self._backend("chat_completions", create)
+        result = await backend.generate(self._request())
+        assert result.metadata["finish_reasons"] == [finish]
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status,details,expected", [
+        ("completed", None, ["stop"]),
+        ("incomplete", "max_output_tokens", ["length"]),
+        ("incomplete", "content_filter", ["content_filter"]),
+    ])
+    async def test_responses_normalises_incomplete_to_length(self, status, details, expected):
+        from types import SimpleNamespace
+        from unittest.mock import AsyncMock
+
+        details_obj = SimpleNamespace(reason=details) if details else None
+        text_part = SimpleNamespace(type="output_text", text="x")
+        resp = SimpleNamespace(id="r", usage=None, status=status, incomplete_details=details_obj,
+                               output=[SimpleNamespace(content=[text_part])])
+        backend = self._backend("responses", AsyncMock(return_value=resp))
+        result = await backend.generate(self._request())
+        assert result.metadata["finish_reasons"] == expected
