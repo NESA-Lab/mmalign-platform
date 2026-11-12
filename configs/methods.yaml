@@ -128,6 +128,6 @@ methods:
   jailguard:
     type: jailguard
     n_variants: 8
-    text_threshold: 0.02
-    image_threshold: 0.025
+    text_threshold: 1.43    # calibrated (char-trigram similarity, intern-s2-preview-35b); paper: 0.02
+    image_threshold: 0.105  # calibrated; paper: 0.025
     concurrency: 4

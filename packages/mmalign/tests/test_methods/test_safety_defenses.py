@@ -272,7 +272,9 @@ async def test_jailguard_divergent_responses_are_refused(scenario: Scenario) -> 
         ]
     )
     backend = ScriptedBackend(lambda req: next(replies))
-    result = await JailGuardMethod(n_variants=4, seed=1).align(_request(False), backend, scenario)
+    result = await JailGuardMethod(n_variants=4, seed=1, text_threshold=0.02).align(
+        _request(False), backend, scenario
+    )
     assert result.metadata["detected"] is True and result.is_refusal()
     assert result.metadata["original_response"] == "original"
     assert result.text() == "I'm sorry, but I can't help with that request."  # judges read text
@@ -292,12 +294,17 @@ async def test_jailguard_mutates_images_and_uses_embeddings(scenario: Scenario) 
     request = _request(True)
     original_uri = _images(request)[0].image_url
     result = await JailGuardMethod(n_variants=3, seed=3).align(request, backend, scenario)
-    assert result.metadata["image_mutated"] is True and result.metadata["threshold"] == 0.025
+    assert result.metadata["image_mutated"] is True and result.metadata["threshold"] == 0.105
     assert result.metadata["similarity_source"] == "embedding"
     assert _images(backend.requests[0])[0].image_url == original_uri  # original sent unchanged
     mutated = [_images(r)[0].image_url for r in backend.requests[1:]]
     assert all(u.startswith("data:image/png;base64,") for u in mutated)
     assert any(u != original_uri for u in mutated)
+
+
+def test_jailguard_default_thresholds_are_calibrated() -> None:
+    method = JailGuardMethod()
+    assert (method._text_threshold, method._image_threshold) == (1.43, 0.105)
 
 
 def test_jailguard_rejects_too_few_variants() -> None:
