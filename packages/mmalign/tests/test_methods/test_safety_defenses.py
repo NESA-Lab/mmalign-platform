@@ -375,3 +375,84 @@ def test_jailguard_leaves_undecodable_image_unchanged() -> None:
 
     part = InputContentPart.image_url_part("data:image/png;base64,dGVzdA==")
     assert _mutate_image_part(part, random.Random(0)) == part
+
+
+# ---------------------------------------------------------------- spec-enhanced variants
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda: SelfReminderMethod(use_specs=True),
+        lambda: GoalPrioritizationMethod(use_specs=True),
+        lambda: AdaShieldStaticMethod(use_specs=True),
+        lambda: IntentionAnalysisMethod(use_specs=True),
+        lambda: ECSOMethod(use_specs=True),
+        lambda: JailGuardMethod(n_variants=2, seed=0, use_specs=True),
+    ],
+)
+async def test_spec_variants_send_scenario_specs_and_keep_image(
+    factory, scenario: Scenario
+) -> None:
+    backend = ScriptedBackend(["No"])
+    await factory().align(_request(), backend, scenario)
+    assert backend.requests
+    for req in backend.requests:
+        system = [m for m in req.input_messages() if m.role == "system"]
+        text = " ".join(p.text or "" for m in system for p in _as_parts_for_test(m))
+        assert "No harm." in text and "Be helpful." in text  # scenario specs reach every call
+    assert len(_images(backend.requests[0])) == 1
+
+
+@pytest.mark.asyncio
+async def test_original_defenses_do_not_send_specs(scenario: Scenario) -> None:
+    backend = ScriptedBackend(["ok"])
+    await GoalPrioritizationMethod().align(_request(), backend, scenario)
+    assert all(m.role != "system" for m in backend.requests[0].input_messages())
+
+
+def _as_parts_for_test(message):
+    c = message.content
+    return [InputContentPart.text_part(c)] if isinstance(c, str) else list(c)
+
+
+@pytest.mark.asyncio
+async def test_adashield_safe_alternative_wording(scenario: Scenario) -> None:
+    backend = ScriptedBackend(["ok"])
+    await AdaShieldStaticMethod(refusal_style="safe_alternative").align(
+        _request(), backend, scenario
+    )
+    sent = _text(backend.requests[0])
+    assert 'please answer "I am sorry"' not in sent and "safe, helpful alternative" in sent
+    with pytest.raises(ValueError):
+        AdaShieldStaticMethod(refusal_style="other")
+
+
+@pytest.mark.asyncio
+async def test_goal_prioritization_safe_refusal_only_before_real_query(scenario: Scenario) -> None:
+    backend = ScriptedBackend(["[Final response] ok"])
+    await GoalPrioritizationMethod(safe_refusal=True).align(_request(False), backend, scenario)
+    sent = _text(backend.requests[0])
+    assert sent.count("offer a safe, useful alternative") == 1
+    assert sent.index("offer a safe, useful alternative") > sent.index("# Task")
+
+
+@pytest.mark.asyncio
+async def test_jailguard_safe_response_on_detection(scenario: Scenario) -> None:
+    replies = iter(
+        [
+            "original",
+            "a b c",
+            "zzzz qqqq",
+            "Totally different text here",
+            "1 2 3",
+            "Safe alternative answer.",
+        ]
+    )
+    backend = ScriptedBackend(lambda req: next(replies))
+    result = await JailGuardMethod(
+        n_variants=4, seed=1, text_threshold=0.02, on_detect="safe_response"
+    ).align(_request(False), backend, scenario)
+    assert result.metadata["detected"] is True and not result.is_refusal()
+    assert result.text() == "Safe alternative answer." and result.attempts == 6

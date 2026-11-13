@@ -350,6 +350,26 @@ inputs excluded). Small samples: differences under ~10 points are within noise.
 - `ecso` lowered safe-sample quality on value safety (59 -> 45 pass rate):
   false self-check alarms answer from a caption without the image.
 
+### Spec-enhanced variants and Intern-S2 adaptations
+
+All options below are off by default, so the original methods are unchanged.
+
+| Option | Applies to | Effect |
+| --- | --- | --- |
+| `use_specs: true` | all six safety defenses | Also give the model the scenario specifications (same wording as `vanilla`) |
+| `safe_refusal: true` | `goal_prioritization` | When refusing, explain briefly and offer a safe alternative |
+| `refusal_style: safe_alternative` | `adashield_static` | Replace the prompt's "answer I am sorry" with "explain the risk and offer a safe alternative" |
+| `on_detect: safe_response` | `jailguard` | On detection, generate a guarded answer with a safe alternative instead of a fixed refusal |
+
+`configs/methods.yaml` registers them as `self_reminder_spec`, `goal_prioritization_spec`,
+`adashield_static_spec`, `intention_analysis_spec`, `ecso_spec` and `jailguard_spec`.
+Two fixes were also made after a dev-split diagnosis on Intern-S2:
+`overrefusal_check` now classifies (YES/NO) before rewriting and keeps the first answer
+otherwise (it used to return a critique as the answer), and `self_refine` gives the first
+draft the scenario specifications. Full Intern-S2 results (all methods vs no method,
+dev-tuned / test-reported, with confidence intervals):
+`test/test3/intern_s2_method_uplift_eval.md`.
+
 ### JailGuard threshold calibration
 
 The JailGuard decision only depends on `max_divergence`, so thresholds were

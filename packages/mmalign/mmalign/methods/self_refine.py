@@ -37,9 +37,13 @@ class SelfRefineMethod:
         self,
         max_iterations: int = 3,
         temperature: float = 0.3,
+        spec_aware_initial: bool = True,
     ) -> None:
         self._max_iterations = max_iterations
         self._temperature = temperature
+        # The first draft sees the scenario specifications too (as in SpecBench's Self-Refine,
+        # which starts from the spec-augmented prompt); False restores the old spec-free draft.
+        self._spec_aware_initial = spec_aware_initial
 
     def validate(self, scenario: Scenario, backend: ModelBackend) -> None:
         if scenario.modality not in self.supported_modalities | {"multimodal"}:
@@ -66,9 +70,16 @@ class SelfRefineMethod:
         iteration_history: list[dict[str, str]] = []
 
         # Initial generation
+        initial_system = _SYSTEM
+        if self._spec_aware_initial and (scenario.safety_specs or scenario.behavioral_specs):
+            initial_system = (
+                f"{_SYSTEM}\n\nFollow these specifications.\n\n"
+                f"Safety specifications:\n{safety_list}\n\n"
+                f"Behavioral specifications:\n{behavioral_list}"
+            )
         initial_req = GenerationRequest(
             model=request.model,
-            input=[InputMessage.system(_SYSTEM), InputMessage.user(user_text)],
+            input=[InputMessage.system(initial_system), InputMessage.user(user_text)],
             temperature=self._temperature,
             max_output_tokens=request.max_output_tokens,
         )

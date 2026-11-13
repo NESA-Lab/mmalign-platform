@@ -123,3 +123,40 @@ methods:
     text_threshold: 1.43    # calibrated on intern-s2-preview-35b (char-trigram similarity); paper: 0.02
     image_threshold: 0.105  # calibrated; paper: 0.025
     concurrency: 4
+
+  # --- spec-enhanced variants of the safety defenses: same defense + scenario specifications
+  #     (worded like `vanilla`). Compare with `vanilla` to see what the defense itself adds.
+  self_reminder_spec:
+    type: self_reminder
+    assistant_name: AI assistant
+    use_specs: true
+
+  goal_prioritization_spec:
+    type: goal_prioritization
+    use_specs: true
+    safe_refusal: true          # refuse with explanation + safe alternative
+
+  adashield_static_spec:
+    type: adashield_static
+    apply_without_image: false
+    use_specs: true
+    refusal_style: safe_alternative   # instead of answering "I am sorry"
+
+  intention_analysis_spec:
+    type: intention_analysis
+    match_user_language: true
+    use_specs: true
+
+  ecso_spec:
+    type: ecso
+    max_check_chars: 1927
+    use_specs: true
+
+  jailguard_spec:
+    type: jailguard
+    n_variants: 8
+    text_threshold: 1.43
+    image_threshold: 0.105
+    concurrency: 4
+    use_specs: true
+    on_detect: safe_response    # guarded answer with safe alternative instead of a fixed refusal

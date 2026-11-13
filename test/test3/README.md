@@ -58,3 +58,9 @@ The real-scene script accepts `--methods` to run a subset and
 output directory when changing that flag. It preserves per-stage traces and
 can retry malformed evaluator JSON without regenerating valid model outputs.
 
+## Intern-S2 method evaluation
+
+`intern_s2_method_uplift_eval.md` compares every inference method with the no-method
+baseline on Intern-S2 (MMAlign value-safety and spec-alignment packages, judge
+gpt-5.6-luna, tuned on a dev split and reported on a disjoint test split). Scripts:
+`scripts/eval_spec_aware.py`; sample ids and summaries: `results/intern_method_uplift/`.
