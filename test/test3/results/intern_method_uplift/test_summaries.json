@@ -1,0 +1,446 @@
+{
+ "spec_alignment": {
+  "adashield_static_spec": {
+   "samples": 50,
+   "responded": 50,
+   "blocked": 0,
+   "spec_pass_rate": 77.3,
+   "safety_spec_pass_rate": 92.16,
+   "behavioral_spec_pass_rate": 68.09,
+   "sample_safe_rate": 78.0,
+   "sample_pass_rate": 14.0
+  },
+  "align3": {
+   "samples": 50,
+   "responded": 50,
+   "blocked": 0,
+   "spec_pass_rate": 80.16,
+   "safety_spec_pass_rate": 91.76,
+   "behavioral_spec_pass_rate": 73.6,
+   "sample_safe_rate": 74.0,
+   "sample_pass_rate": 32.0
+  },
+  "align3_specbench": {
+   "samples": 50,
+   "responded": 50,
+   "blocked": 0,
+   "spec_pass_rate": 86.38,
+   "safety_spec_pass_rate": 95.22,
+   "behavioral_spec_pass_rate": 80.73,
+   "sample_safe_rate": 82.0,
+   "sample_pass_rate": 36.0
+  },
+  "best_of_n": {
+   "samples": 50,
+   "responded": 46,
+   "blocked": 1,
+   "spec_pass_rate": 83.27,
+   "safety_spec_pass_rate": 94.18,
+   "behavioral_spec_pass_rate": 76.55,
+   "sample_safe_rate": 80.43,
+   "sample_pass_rate": 26.09
+  },
+  "critic_revise_agent": {
+   "samples": 50,
+   "responded": 49,
+   "blocked": 1,
+   "spec_pass_rate": 87.02,
+   "safety_spec_pass_rate": 92.57,
+   "behavioral_spec_pass_rate": 83.77,
+   "sample_safe_rate": 75.51,
+   "sample_pass_rate": 34.69
+  },
+  "ecso_spec": {
+   "samples": 50,
+   "responded": 50,
+   "blocked": 0,
+   "spec_pass_rate": 80.47,
+   "safety_spec_pass_rate": 92.54,
+   "behavioral_spec_pass_rate": 72.67,
+   "sample_safe_rate": 76.0,
+   "sample_pass_rate": 16.0
+  },
+  "goal_prioritization_spec": {
+   "samples": 50,
+   "responded": 49,
+   "blocked": 1,
+   "spec_pass_rate": 79.16,
+   "safety_spec_pass_rate": 94.15,
+   "behavioral_spec_pass_rate": 70.1,
+   "sample_safe_rate": 79.59,
+   "sample_pass_rate": 22.45
+  },
+  "intention_analysis_spec": {
+   "samples": 50,
+   "responded": 49,
+   "blocked": 1,
+   "spec_pass_rate": 74.64,
+   "safety_spec_pass_rate": 92.35,
+   "behavioral_spec_pass_rate": 64.05,
+   "sample_safe_rate": 73.47,
+   "sample_pass_rate": 10.2
+  },
+  "jailguard": {
+   "samples": 50,
+   "responded": 42,
+   "blocked": 1,
+   "spec_pass_rate": 61.37,
+   "safety_spec_pass_rate": 84.67,
+   "behavioral_spec_pass_rate": 47.88,
+   "sample_safe_rate": 61.9,
+   "sample_pass_rate": 19.05
+  },
+  "jailguard_spec": {
+   "samples": 50,
+   "responded": 46,
+   "blocked": 1,
+   "spec_pass_rate": 79.18,
+   "safety_spec_pass_rate": 93.99,
+   "behavioral_spec_pass_rate": 70.2,
+   "sample_safe_rate": 82.61,
+   "sample_pass_rate": 21.74
+  },
+  "more_think": {
+   "samples": 50,
+   "responded": 46,
+   "blocked": 1,
+   "spec_pass_rate": 86.52,
+   "safety_spec_pass_rate": 94.68,
+   "behavioral_spec_pass_rate": 81.79,
+   "sample_safe_rate": 82.61,
+   "sample_pass_rate": 21.74
+  },
+  "multi_agent_consensus": {
+   "samples": 50,
+   "responded": 49,
+   "blocked": 1,
+   "spec_pass_rate": 82.02,
+   "safety_spec_pass_rate": 93.81,
+   "behavioral_spec_pass_rate": 74.68,
+   "sample_safe_rate": 77.55,
+   "sample_pass_rate": 26.53
+  },
+  "overrefusal_check": {
+   "samples": 50,
+   "responded": 49,
+   "blocked": 1,
+   "spec_pass_rate": 81.94,
+   "safety_spec_pass_rate": 92.89,
+   "behavioral_spec_pass_rate": 75.16,
+   "sample_safe_rate": 77.55,
+   "sample_pass_rate": 20.41
+  },
+  "risk_adaptive_agent": {
+   "samples": 50,
+   "responded": 47,
+   "blocked": 2,
+   "spec_pass_rate": 81.06,
+   "safety_spec_pass_rate": 94.65,
+   "behavioral_spec_pass_rate": 72.7,
+   "sample_safe_rate": 82.98,
+   "sample_pass_rate": 21.28
+  },
+  "self_refine": {
+   "samples": 50,
+   "responded": 49,
+   "blocked": 1,
+   "spec_pass_rate": 83.62,
+   "safety_spec_pass_rate": 93.93,
+   "behavioral_spec_pass_rate": 76.66,
+   "sample_safe_rate": 73.47,
+   "sample_pass_rate": 20.41
+  },
+  "self_reminder_spec": {
+   "samples": 50,
+   "responded": 49,
+   "blocked": 1,
+   "spec_pass_rate": 78.71,
+   "safety_spec_pass_rate": 92.47,
+   "behavioral_spec_pass_rate": 70.51,
+   "sample_safe_rate": 75.51,
+   "sample_pass_rate": 18.37
+  },
+  "tpo": {
+   "samples": 50,
+   "responded": 48,
+   "blocked": 1,
+   "spec_pass_rate": 84.78,
+   "safety_spec_pass_rate": 94.24,
+   "behavioral_spec_pass_rate": 79.05,
+   "sample_safe_rate": 81.25,
+   "sample_pass_rate": 29.17
+  },
+  "user_conditioned_safety_critic": {
+   "samples": 50,
+   "responded": 45,
+   "blocked": 4,
+   "spec_pass_rate": 74.71,
+   "safety_spec_pass_rate": 93.59,
+   "behavioral_spec_pass_rate": 64.16,
+   "sample_safe_rate": 80.0,
+   "sample_pass_rate": 20.0
+  },
+  "vanilla": {
+   "samples": 50,
+   "responded": 50,
+   "blocked": 0,
+   "spec_pass_rate": 78.31,
+   "safety_spec_pass_rate": 92.93,
+   "behavioral_spec_pass_rate": 69.75,
+   "sample_safe_rate": 78.0,
+   "sample_pass_rate": 22.0
+  },
+  "vanilla_specbench": {
+   "samples": 50,
+   "responded": 48,
+   "blocked": 2,
+   "spec_pass_rate": 82.11,
+   "safety_spec_pass_rate": 95.02,
+   "behavioral_spec_pass_rate": 73.51,
+   "sample_safe_rate": 81.25,
+   "sample_pass_rate": 27.08
+  },
+  "vlm_safety_guard": {
+   "samples": 50,
+   "responded": 49,
+   "blocked": 1,
+   "spec_pass_rate": 76.09,
+   "safety_spec_pass_rate": 97.96,
+   "behavioral_spec_pass_rate": 62.26,
+   "sample_safe_rate": 91.84,
+   "sample_pass_rate": 16.33
+  },
+  "zero_think": {
+   "samples": 50,
+   "responded": 49,
+   "blocked": 1,
+   "spec_pass_rate": 81.39,
+   "safety_spec_pass_rate": 92.78,
+   "behavioral_spec_pass_rate": 74.28,
+   "sample_safe_rate": 77.55,
+   "sample_pass_rate": 26.53
+  }
+ },
+ "value_safety": {
+  "adashield_static_spec": {
+   "samples": 180,
+   "responded": 130,
+   "blocked": 50,
+   "spec_pass_rate": 88.99,
+   "safety_spec_pass_rate": 92.68,
+   "behavioral_spec_pass_rate": 84.91,
+   "sample_safe_rate": 88.46,
+   "sample_pass_rate": 66.15
+  },
+  "align3": {
+   "samples": 180,
+   "responded": 141,
+   "blocked": 37,
+   "spec_pass_rate": 91.87,
+   "safety_spec_pass_rate": 94.74,
+   "behavioral_spec_pass_rate": 88.84,
+   "sample_safe_rate": 87.23,
+   "sample_pass_rate": 73.76
+  },
+  "align3_specbench": {
+   "samples": 180,
+   "responded": 136,
+   "blocked": 41,
+   "spec_pass_rate": 92.97,
+   "safety_spec_pass_rate": 96.8,
+   "behavioral_spec_pass_rate": 88.97,
+   "sample_safe_rate": 94.12,
+   "sample_pass_rate": 76.47
+  },
+  "best_of_n": {
+   "samples": 180,
+   "responded": 128,
+   "blocked": 52,
+   "spec_pass_rate": 92.42,
+   "safety_spec_pass_rate": 94.71,
+   "behavioral_spec_pass_rate": 90.11,
+   "sample_safe_rate": 91.41,
+   "sample_pass_rate": 72.66
+  },
+  "critic_revise_agent": {
+   "samples": 180,
+   "responded": 127,
+   "blocked": 52,
+   "spec_pass_rate": 91.97,
+   "safety_spec_pass_rate": 96.38,
+   "behavioral_spec_pass_rate": 87.53,
+   "sample_safe_rate": 91.34,
+   "sample_pass_rate": 70.87
+  },
+  "ecso_spec": {
+   "samples": 180,
+   "responded": 131,
+   "blocked": 49,
+   "spec_pass_rate": 89.67,
+   "safety_spec_pass_rate": 92.45,
+   "behavioral_spec_pass_rate": 86.79,
+   "sample_safe_rate": 87.02,
+   "sample_pass_rate": 69.47
+  },
+  "goal_prioritization_spec": {
+   "samples": 180,
+   "responded": 111,
+   "blocked": 69,
+   "spec_pass_rate": 86.91,
+   "safety_spec_pass_rate": 89.71,
+   "behavioral_spec_pass_rate": 84.21,
+   "sample_safe_rate": 90.99,
+   "sample_pass_rate": 66.67
+  },
+  "intention_analysis_spec": {
+   "samples": 180,
+   "responded": 135,
+   "blocked": 44,
+   "spec_pass_rate": 88.73,
+   "safety_spec_pass_rate": 93.78,
+   "behavioral_spec_pass_rate": 83.24,
+   "sample_safe_rate": 91.85,
+   "sample_pass_rate": 70.37
+  },
+  "jailguard": {
+   "samples": 180,
+   "responded": 115,
+   "blocked": 60,
+   "spec_pass_rate": 78.0,
+   "safety_spec_pass_rate": 89.26,
+   "behavioral_spec_pass_rate": 66.35,
+   "sample_safe_rate": 82.61,
+   "sample_pass_rate": 43.48
+  },
+  "jailguard_spec": {
+   "samples": 180,
+   "responded": 118,
+   "blocked": 58,
+   "spec_pass_rate": 90.15,
+   "safety_spec_pass_rate": 95.44,
+   "behavioral_spec_pass_rate": 84.89,
+   "sample_safe_rate": 93.22,
+   "sample_pass_rate": 71.19
+  },
+  "more_think": {
+   "samples": 180,
+   "responded": 127,
+   "blocked": 52,
+   "spec_pass_rate": 91.83,
+   "safety_spec_pass_rate": 95.21,
+   "behavioral_spec_pass_rate": 88.41,
+   "sample_safe_rate": 92.13,
+   "sample_pass_rate": 70.08
+  },
+  "multi_agent_consensus": {
+   "samples": 180,
+   "responded": 127,
+   "blocked": 53,
+   "spec_pass_rate": 89.81,
+   "safety_spec_pass_rate": 93.44,
+   "behavioral_spec_pass_rate": 86.11,
+   "sample_safe_rate": 91.34,
+   "sample_pass_rate": 70.87
+  },
+  "overrefusal_check": {
+   "samples": 180,
+   "responded": 128,
+   "blocked": 52,
+   "spec_pass_rate": 92.7,
+   "safety_spec_pass_rate": 96.98,
+   "behavioral_spec_pass_rate": 88.08,
+   "sample_safe_rate": 94.53,
+   "sample_pass_rate": 76.56
+  },
+  "risk_adaptive_agent": {
+   "samples": 180,
+   "responded": 126,
+   "blocked": 54,
+   "spec_pass_rate": 91.52,
+   "safety_spec_pass_rate": 96.11,
+   "behavioral_spec_pass_rate": 87.29,
+   "sample_safe_rate": 92.86,
+   "sample_pass_rate": 69.05
+  },
+  "self_refine": {
+   "samples": 180,
+   "responded": 124,
+   "blocked": 53,
+   "spec_pass_rate": 90.71,
+   "safety_spec_pass_rate": 93.79,
+   "behavioral_spec_pass_rate": 87.57,
+   "sample_safe_rate": 88.71,
+   "sample_pass_rate": 72.58
+  },
+  "self_reminder_spec": {
+   "samples": 180,
+   "responded": 133,
+   "blocked": 47,
+   "spec_pass_rate": 89.09,
+   "safety_spec_pass_rate": 92.19,
+   "behavioral_spec_pass_rate": 86.01,
+   "sample_safe_rate": 86.47,
+   "sample_pass_rate": 66.17
+  },
+  "tpo": {
+   "samples": 180,
+   "responded": 127,
+   "blocked": 52,
+   "spec_pass_rate": 88.99,
+   "safety_spec_pass_rate": 92.53,
+   "behavioral_spec_pass_rate": 85.41,
+   "sample_safe_rate": 85.04,
+   "sample_pass_rate": 65.35
+  },
+  "user_conditioned_safety_critic": {
+   "samples": 180,
+   "responded": 127,
+   "blocked": 53,
+   "spec_pass_rate": 89.73,
+   "safety_spec_pass_rate": 92.86,
+   "behavioral_spec_pass_rate": 86.21,
+   "sample_safe_rate": 88.19,
+   "sample_pass_rate": 70.08
+  },
+  "vanilla": {
+   "samples": 180,
+   "responded": 131,
+   "blocked": 49,
+   "spec_pass_rate": 90.17,
+   "safety_spec_pass_rate": 94.24,
+   "behavioral_spec_pass_rate": 85.98,
+   "sample_safe_rate": 91.6,
+   "sample_pass_rate": 68.7
+  },
+  "vanilla_specbench": {
+   "samples": 180,
+   "responded": 128,
+   "blocked": 52,
+   "spec_pass_rate": 90.86,
+   "safety_spec_pass_rate": 95.99,
+   "behavioral_spec_pass_rate": 85.52,
+   "sample_safe_rate": 92.97,
+   "sample_pass_rate": 68.75
+  },
+  "vlm_safety_guard": {
+   "samples": 180,
+   "responded": 127,
+   "blocked": 53,
+   "spec_pass_rate": 90.8,
+   "safety_spec_pass_rate": 93.19,
+   "behavioral_spec_pass_rate": 88.37,
+   "sample_safe_rate": 91.34,
+   "sample_pass_rate": 70.87
+  },
+  "zero_think": {
+   "samples": 180,
+   "responded": 125,
+   "blocked": 50,
+   "spec_pass_rate": 91.59,
+   "safety_spec_pass_rate": 96.22,
+   "behavioral_spec_pass_rate": 86.76,
+   "sample_safe_rate": 92.0,
+   "sample_pass_rate": 72.8
+  }
+ }
+}
